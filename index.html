@@ -55,115 +55,225 @@
 
 <div class="container">
   <div id="quiz-container">
-    <!-- Content will be injected here -->
-  </div>
+    </div>
 </div>
 
 <script>
+// คลังข้อมูลโจทย์ทั้งหมด 20 ข้อแบบสมบูรณ์
 const quizData = [
   {
     verb: "GO (ไป)",
     hint: "คำนี้เปลี่ยนรูปไปเลย ไม่มีการเติม -ed นะครับ ให้ท่องว่า 'โก-เว้นท์-กอน'",
     options: [
-      { text: "went, gone", rationale: "ถูกต้อง! go (ช่อง 1) -> went (ช่อง 2) -> gone (ช่อง 3)", isCorrect: true },
-      { text: "goed, goed", rationale: "ผิดครับ! go เป็นกริยาไม่ปกติ ห้ามเติม -ed เด็ดขาด", isCorrect: false },
-      { text: "goes, gone", rationale: "เกือบถูก! แต่ goes คือรูปที่ใช้กับประธานเอกพจน์ในปัจจุบัน ไม่ใช่ช่อง 2", isCorrect: false }
+      { text: "went / gone", rationale: "ถูกต้องครับ! จำง่ายๆ ว่า Go - Went - Gone เป็นคำที่ใช้บ่อยที่สุดเลยครับ", isCorrect: true },
+      { text: "goed / goed", rationale: "ยังไม่ถูกครับ! Go เป็นกริยาเปลี่ยนรูป (Irregular Verb) ห้ามเติม -ed นะครับ", isCorrect: false },
+      { text: "goes / going", rationale: "ยังไม่ใช่ครับ อันนี้เป็นรูปเติม -s และเติม -ing สำหรับเหตุการณ์ปัจจุบันครับ", isCorrect: false }
     ]
   },
   {
     verb: "EAT (กิน)",
     hint: "ช่อง 2 แค่สลับตัวอักษรจากคำเดิม ส่วนช่อง 3 เติม -en ต่อท้าย",
     options: [
-      { text: "ate, eaten", rationale: "ถูกต้อง! eat -> ate (สลับตัวอักษร) -> eaten", isCorrect: true },
-      { text: "eated, eaten", rationale: "ผิดครับ! ช่อง 2 ของ eat ต้องเปลี่ยนรูปเป็น ate", isCorrect: false },
-      { text: "ate, ate", rationale: "ยังไม่ครบ! ช่อง 2 และ 3 ของคำนี้เขียนไม่เหมือนกัน", isCorrect: false }
+      { text: "ate / eaten", rationale: "เก่งมากครับ! Eat - Ate - Eaten สังเกตว่าช่อง 2 แค่สลับตัวอักษรจาก eat เป็น ate เองนะ", isCorrect: true },
+      { text: "eated / eated", rationale: "ผิดครับ! กริยากลุ่มนี้ห้ามเติม -ed เด็ดขาด ให้จำว่าเปลี่ยนรูปครับ", isCorrect: false },
+      { text: "ate / ate", rationale: "เกือบถูกแล้วครับ แต่ช่อง 3 ต้องมีตัว n ต่อท้ายกลายเป็น eaten นะครับ", isCorrect: false }
     ]
   },
   {
-    verb: "'Drink' (ดื่ม) คืออะไร?",
-    hint: "เสียงสระของคำนี้จะเปลี่ยนไปตามเสียง 'อิ - แอะ - อะ",
+    verb: "DRINK (ดื่ม)",
+    hint: "เสียงสระของคำนี้จะเปลี่ยนไปตามเสียง 'อิ - แอะ - อะ'",
     options: [
-      { text: "drank / drunk", rationale: "ถูกต้อง! Drink - Drank - Drunk (ดริ้งค์ - แดร้งค์ - ดรั้งค์) จำง่ายๆ สระจะเปลี่ยนตามลำดับ i -> a -> u ครับ", isCorrect: true },
+      { text: "drank / drunk", rationale: "ถูกต้อง! Drink - Drank - Drunk จำง่ายๆ สระจะเปลี่ยนตามลำดับ i -> a -> u ครับ", isCorrect: true },
       { text: "drinked / drinked", rationale: "ยังไม่ถูกจ้า คำนี้เปลี่ยนสระด้านในเพื่อบอกอดีต ไม่เติม -ed นะครับ", isCorrect: false },
       { text: "drunk / drank", rationale: "สลับตำแหน่งกันนิดเดียวครับ ช่อง 2 ต้องสระ a (drank) และช่อง 3 ต้องสระ u (drunk) ครับ", isCorrect: false }
     ]
   },
-   {
-    verb: "'See' (เห็น) คืออะไร?",
+  {
+    verb: "SEE (เห็น)",
     hint: "ช่อง 2 เขียนและออกเสียงเหมือนคำว่า 'เลื่อย' หรือเครื่องเล่นม้ากระดก (ซีซอว์)",
     options: [
-      { text: "saw / seen", rationale: "ยอดเยี่ยม! See - Saw - Seen (ซี - ซอว์ - ซีน) ท่องให้ขึ้นใจได้เลยครับ", isCorrect: true },
+      { text: "saw / seen", rationale: "ยอดเยี่ยม! See - Saw - Seen ท่องให้ขึ้นใจได้เลยครับ", isCorrect: true },
       { text: "seed / seed", rationale: "ยังไม่ใช่ครับ seed แปลว่าเมล็ดพืชครับ ส่วนกริยา see ต้องเปลี่ยนรูปเป็น saw นะครับ", isCorrect: false },
       { text: "seen / saw", rationale: "สลับตำแหน่งกันครับ ช่อง 2 ต้องเป็น saw และช่อง 3 ต้องเป็น seen ครับ", isCorrect: false }
     ]
   },
-    {
-    verb: "คำกริยาช่อง 2 และ 3 ของ 'Come' (มา) คืออะไร?",
-    hint: "ช่อง 2 เขียนและออกเสียงเหมือนคำว่า 'เลื่อย' หรือเครื่องเล่นม้ากระดก (ซีซอว์)",
+  {
+    verb: "COME (มา)",
+    hint: "คำนี้พิเศษตรงที่ กริยาช่องที่ 1 และช่องที่ 3 จะเขียนและออกเสียงเหมือนกันเป๊ะเลย",
     options: [
-      { text: "came / come", rationale: "ถูกต้องที่สุด! Come - Came - Come (คัม - เคม - คัม) ช่อง 1 กับช่อง 3 หน้าตาเหมือนกันเลย จำง่ายมากครับ", isCorrect: true },
+      { text: "came / come", rationale: "ถูกต้องที่สุด! Come - Came - Come ช่อง 1 กับช่อง 3 หน้าตาเหมือนกันเลย จำง่ายมากครับ", isCorrect: true },
       { text: "comed / comed", rationale: "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปตรงกลางจาก o เป็น a ในช่อง 2 ครับ", isCorrect: false },
       { text: "came / came", rationale: "เกือบถูกครับ แต่จำไว้ว่าช่อง 3 จะกลับมาหน้าตาเหมือนช่อง 1 คือคำว่า come ครับ", isCorrect: false }
     ]
   },
-   {
-    verb: "คำกริยาช่อง 2 และ 3 ของ 'Do' (ทำ) คืออะไร?",
+  {
+    verb: "DO (ทำ)",
     hint: "ช่องที่ 3 ออกเสียงคล้ายๆ กับคำว่า 'ดัน' (Done) ในภาษาไทยครับ",
     options: [
-      { text: "did / done", rationale: "เก่งมากครับ! Do - Did - Done (ดู - ดิด - ดัน) เป็นคำพื้นฐานที่เจอในข้อสอบและชีวิตประจำวันบ่อยที่สุดเลย", isCorrect: true },
+      { text: "did / done", rationale: "เก่งมากครับ! Do - Did - Done เป็นคำพื้นฐานที่เจอในข้อสอบและชีวิตประจำวันบ่อยที่สุดเลย", isCorrect: true },
       { text: "doed / doed", rationale: "ไม่ถูกครับ คำว่า do ไม่มีรูปเติม -ed นะครับ ต้องเปลี่ยนรูปไปเลย", isCorrect: false },
-      { text: "does / doing", rationale: "อันนี้เป็นรูปใช้กับประธานเอกพจน์ (does) และรูปกำลังทำ (doing) ครับ ไม่ใช่กริยา 3 ช่องนะ" , isCorrect: false }
+      { text: "does / doing", rationale: "อันนี้เป็นรูปใช้กับประธานเอกพจน์ (does) และรูปกำลังทำ (doing) ครับ ไม่ใช่กริยา 3 ช่องนะ", isCorrect: false }
     ]
   },
-   {
-    verb:  "คำกริยาช่อง 2 และ 3 ของ 'Make' (ทำ/สร้าง) คืออะไร?",
+  {
+    verb: "MAKE (ทำ/สร้าง)",
     hint: "ลองนึกถึงป้ายสลักหลังสิ่งของหรือของเล่น เช่น '_____ in Thailand'",
     options: [
-      { text: "made / made", rationale: "ถูกต้องเลย! Make - Made - Made (เมค - เมด - เมด) ช่อง 2 และ 3 หน้าตาเหมือนกันเลยครับ", isCorrect: true },
+      { text: "made / made", rationale: "ถูกต้องเลย! Make - Made - Made ช่อง 2 และ 3 หน้าตาเหมือนกันเลยครับ", isCorrect: true },
       { text: "maked / maked", rationale: "ยังไม่ถูกครับ คำนี้เราจะไม่เติม -ed แต่จะเปลี่ยนตัว k เป็นตัว d แทนครับ", isCorrect: false },
-      { text: "make / made", rationale: "ยังไม่ครบถ้วนครับ ช่อง 2 และช่อง 3 ต้องเปลี่ยนรูปเป็น made ทั้งคู่เลยครับ" , isCorrect: false }
+      { text: "make / made", rationale: "ยังไม่ครบถ้วนครับ ช่อง 2 และช่อง 3 ต้องเปลี่ยนรูปเป็น made ทั้งคู่เลยครับ", isCorrect: false }
     ]
   },
-   {
-    verb:  "คำกริยาช่อง 2 และ 3 ของ 'Buy' (ซื้อ) คืออะไร?",
+  {
+    verb: "BUY (ซื้อ)",
     hint: "ทั้งช่อง 2 และ 3 จะเปลี่ยนรูปยาวขึ้น สะกดด้วย -ought ออกเสียงคล้ายๆ คำว่า 'บอท'",
     options: [
-      { text: "bought / bought", rationale: "เก่งมากครับ! Buy - Bought - Bought (บาย - บอท - บอท) เปลี่ยนรูปไปเยอะหน่อย แต่ช่อง 2 กับ 3 เหมือนกันนะ", isCorrect: true },
+      { text: "bought / bought", rationale: "เก่งมากครับ! Buy - Bought - Bought เปลี่ยนรูปไปเยอะหน่อย แต่ช่อง 2 กับ 3 เหมือนกันนะ", isCorrect: true },
       { text: "buyed / buyed", rationale: "ผิดครับ! คำนี้ห้ามเติม -ed นะครับ ต้องเปลี่ยนรูปยาวขึ้นเป็น bought", isCorrect: false },
-      { text: "brought / brought", rationale: "คำนี้หน้าตาคล้ายกันมาก แต่ brought (มีร.เรือ) มาจาก bring ที่แปลว่า 'นำมา' ครับ ส่วน buy (ซื้อ) ต้องไม่มี ร.เรือ (bought)" , isCorrect: false }
+      { text: "brought / brought", rationale: "คำนี้หน้าตาคล้ายกันมาก แต่ brought มาจาก bring ที่แปลว่า 'นำมา' ครับ ส่วน buy ต้องไม่มี ร.เรือ", isCorrect: false }
     ]
   },
   {
-    verb:  "คำกริยาช่อง 2 และ 3 ของ 'Take' (เอาไป/พาไป/กินยา) คืออะไร?",
+    verb: "TAKE (เอาไป/พาไป)",
     hint: "ช่อง 2 ออกเสียงคล้ายคำว่า 'ทุก' ส่วนช่อง 3 จะลงท้ายด้วยเสียง '-เคน'",
     options: [
-      { text: "took / taken", rationale: "เลิศ! Take - Took - Taken (เทค - ทุค - เทคเคน) ท่องรวมกันแล้วจำง่ายดีครับ", isCorrect: true },
+      { text: "took / taken", rationale: "ยอดเยี่ยม! Take - Took - Taken ท่องรวมกันแล้วจำง่ายดีครับ", isCorrect: true },
       { text: "taked / taked", rationale: "ไม่ใช่ครับ ตัวนี้เป็นกริยาไม่ปกติ (Irregular) จะไม่มีการเติม -ed ต่อท้ายครับ", isCorrect: false },
-      { text: "take / took", rationale: "ยังไม่ถูกครับ ช่อง 2 คือ took ถูกแล้ว แต่ช่อง 3 ต้องเปลี่ยนเป็น taken ครับ" , isCorrect: false }
+      { text: "take / took", rationale: "ยังไม่ถูกครับ ช่อง 2 คือ took ถูกแล้ว แต่ช่อง 3 ต้องเปลี่ยนเป็น taken ครับ", isCorrect: false }
     ]
   },
   {
-    verb: "SEE (เห็น)",
-    hint: "จำง่ายๆ ว่า 'ซี-ซอ-ซีน' ช่อง 2 จะคล้ายคำว่า 'เลื่อย' ในภาษาอังกฤษ",
+    verb: "WRITE (เขียน)",
+    hint: "ช่อง 2 จะเปลี่ยนสระเป็นสระโอ (Wrote) ส่วนช่อง 3 ออกเสียงว่า 'ริทเท่น'",
     options: [
-      { text: "saw, seen", rationale: "เป๊ะมาก! see -> saw -> seen", isCorrect: true },
-      { text: "seed, seen", rationale: "อย่าเผลอเติม -ed นะครับ คำนี้ต้องเปลี่ยนรูป", isCorrect: false },
-      { text: "saw, saw", rationale: "ช่อง 3 ต้องมีตัว n ต่อท้าย กลายเป็น seen ครับ", isCorrect: false }
+      { text: "wrote / written", rationale: "ถูกต้องครับ! Write - Wrote - Written สังเกตช่อง 3 จะมีตัว t สองตัวนะครับ", isCorrect: true },
+      { text: "writed / writed", rationale: "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปสระด้านในครับ", isCorrect: false },
+      { text: "wrote / wrote", rationale: "ยังไม่ใช่จ้า ช่อง 3 ต้องเปลี่ยนรูปแบบเป็น written ครับ จะไม่ซ้ำกับช่อง 2", isCorrect: false }
+    ]
+  },
+  {
+    verb: "READ (อ่าน)",
+    hint: "คำนี้มหัศจรรย์มาก เพราะตัวเขียนสะกดเหมือนช่องที่ 1 ทุกประการ แต่ออกเสียงไม่เหมือนกัน!",
+    options: [
+      { text: "read / read", rationale: "เก่งมาก! Read - Read - Read เขียนเหมือนเดิมเป๊ะทุกช่อง! แต่ช่อง 2 และ 3 จะเปลี่ยนไปออกเสียงว่า 'เรด' ครับ", isCorrect: true },
+      { text: "readed / readed", rationale: "ผิดครับ คำนี้พิเศษมาก ไม่มีการเติม -ed ใดๆ ทั้งสิ้น เขียนเหมือนช่อง 1 เลย", isCorrect: false },
+      { text: "red / red", rationale: "เกือบถูกในเรื่องเสียงครับ แต่อันนี้เป็นคำว่า Red ที่แปลว่าสีแดง รูปกริยายังต้องสะกดว่า read เหมือนเดิมนะ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "SLEEP (นอนหลับ)",
+    hint: "เทคนิคการจำคือ ตัดตัว e ออกไปหนึ่งตัว แล้วเติมตัว t ไว้ข้างหลังทั้งช่อง 2 และ 3",
+    options: [
+      { text: "slept / slept", rationale: "ถูกต้องครับ! Sleep - Slept - Slept ช่อง 2 กับ 3 หน้าตาเหมือนกันเลย", isCorrect: true },
+      { text: "sleeped / sleeped", rationale: "ยังไม่ถูกจ้า คำนี้ห้ามเติม -ed นะครับ วิธีจำคือให้ลดตัว e ลงหนึ่งตัวแล้วเติม t ข้างหลังแทน", isCorrect: false },
+      { text: "slaped / slaped", rationale: "ไม่ใช่ครับ คำนี้เปลี่ยนรูปเป็น slept ครับ ส่วน slap แปลว่าตบครับคนละคำกันเลย", isCorrect: false }
+    ]
+  },
+  {
+    verb: "RUN (วิ่ง)",
+    hint: "กฎเหมือนคำว่า Come เลยครับ คือกริยาช่องที่ 1 และช่องที่ 3 จะหน้าตาเหมือนกันเป๊ะ",
+    options: [
+      { text: "ran / run", rationale: "ใช่เลย! Run - Ran - Run วิ่งสลับรูปสระอากลับมาเป็นสระอุ (ช่อง 1 กับ 3 เหมือนกัน)", isCorrect: true },
+      { text: "runed / runed", rationale: "ไม่ถูกครับ คำนี้เป็นกริยาเปลี่ยนรูป ห้ามเติม -ed นะครับ", isCorrect: false },
+      { text: "ran / ran", rationale: "เกือบถูกครับ แต่อย่าลืมว่ากริยาช่อง 3 ของคำนี้ต้องเปลี่ยนกลับมาเป็น run เหมือนช่อง 1 ครับ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "SPEAK (พูด)",
+    hint: "ช่อง 2 ออกเสียงสระโอ (Spoke) ส่วนช่อง 3 จะนำช่อง 2 มาเติม -en ไว้ข้างหลัง",
+    options: [
+      { text: "spoke / spoken", rationale: "ถูกต้อง! Speak - Spoke - Spoken คำนี้ใช้บ่อยมากเวลาพูดถึงการสนทนาครับ", isCorrect: true },
+      { text: "speaked / speaked", rationale: "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปสระแบบนี้ครับ", isCorrect: false },
+      { text: "spoke / spoke", rationale: "ยังไม่ถูกครับ ช่อง 3 ต้องเติมท้ายด้วย -en กลายเป็น spoken นะครับ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "GIVE (ให้)",
+    hint: "ช่อง 2 เปลี่ยนจากตัว i เป็นตัว a ส่วนช่อง 3 ออกเสียงว่า 'กิฝ-เฝิน'",
+    options: [
+      { text: "gave / given", rationale: "เก่งมาก! Give - Gave - Given จำง่ายๆ ช่อง 3 แค่เอาช่อง 1 มาเติมตัว n เข้าไปตัวเดียวเองครับ", isCorrect: true },
+      { text: "gived / gived", rationale: "ไม่ถูกครับ คำนี้เปลี่ยนรูปสระด้านใน ไม่เติม -ed นะครับ", isCorrect: false },
+      { text: "gave / givened", rationale: "ไม่มีการสะกดซ้อนกันแบบนี้ครับ ช่อง 3 คือ given เติมแค่ n ตัวเดียวพอครับ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "SWIM (ว่ายน้ำ)",
+    hint: "เปลี่ยนสระด้านในตามลำดับตัวอักษร i -> a -> u",
+    options: [
+      { text: "swam / swum", rationale: "ถูกต้อง! Swim - Swam - Swum ท่องเรียงตามสระ อิ - แอะ - อะ ได้เลยเหมือนคำว่า Drink ครับ", isCorrect: true },
+      { text: "swimed / swimed", rationale: "ยังไม่ใช่ครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนสระอักษรข้างใน", 'isCorrect': false },
+      { text: "swum / swam", rationale: "สลับตำแหน่งกันเล็กน้อยครับ ช่อง 2 ต้องเป็นสระ a (swam) และช่อง 3 เป็นสระ u (swum) ครับ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "THINK (คิด)",
+    hint: "เปลี่ยนรูปยาวขึ้นเหมือนคำว่า Buy เลยครับ และทั้งสองช่องออกเสียงว่า 'ธอท'",
+    options: [
+      { text: "thought / thought", rationale: "ยอดเยี่ยมมาก! Think - Thought - Thought ช่อง 2 และ 3 หน้าตาเหมือนกันเป๊ะเลยครับ", isCorrect: true },
+      { text: "thinked / thinked", rationale: "ผิดครับ คำนี้เวลาเป็นอดีตจะเปลี่ยนโครงสร้างยาวขึ้น ไม่มีการเติม -ed นะครับ", isCorrect: false },
+      { text: "thank / thank", rationale: "ยังไม่ใช่ครับ thank แปลว่า 'ขอบคุณ' ส่วนรูปอดีตของ think ต้องเป็น thought ครับ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "KNOW (รู้/รู้จัก)",
+    hint: "ช่อง 2 ออกเสียงคล้ายๆ คำว่า 'ใหม่' (New) ส่วนช่อง 3 ออกเสียงว่า 'โนน'",
+    options: [
+      { text: "knew / known", rationale: "เก่งมากครับ! Know - Knew - Known จำเทคนิคเปลี่ยน o -> e ในช่อง 2 และเติม n ในช่อง 3 นะครับ", isCorrect: true },
+      { text: "knowed / knowed", rationale: "ไม่ถูกครับ คำนี้ห้ามเติม -ed เด็ดขาดเลยนะ ต้องเปลี่ยนรูปครับ", isCorrect: false },
+      { text: "knew / knew", rationale: "เกือบถูกครับ แต่ช่อง 3 ต้องเพิ่มตัว n ต่อท้ายกลายเป็น known ครับจะไม่เหมือนช่อง 2", isCorrect: false }
+    ]
+  },
+  {
+    verb: "CUT (ตัด)",
+    hint: "คำนี้ใจดีกับคนเรียนที่สุดในโลก เพราะหน้าตาและเสียงเหมือนกันหมดทั้ง 3 ช่องเลย!",
+    options: [
+      { text: "cut / cut", rationale: "ถูกต้องที่สุด! Cut - Cut - Cut เหมือนกันหมดทุกช่อง จำง่ายสบายใจที่สุดเลยครับคำนี้", isCorrect: true },
+      { text: "cuted / cuted", rationale: "ผิดครับ ไม่ต้องเติม -ed ใดๆ ทั้งสิ้น เขียนเหมือนช่อง 1 ได้ทันทีเลยครับ", isCorrect: false },
+      { text: "cat / cut", rationale: "ยังไม่ใช่ครับ cat แปลว่าแมวครับ ส่วนกริยา cut รูปอดีตก็ยังคงเป็น cut เหมือนเดิมนะ", isCorrect: false }
+    ]
+  },
+  {
+    verb: "DRIVE (ขับรถ)",
+    hint: "ช่อง 2 เปลี่ยนเป็นสระโอ (Drove) ส่วนช่อง 3 เปลี่ยนเป็นเสียงสระอิสั้นๆ แล้วเติม -en (Driven)",
+    options: [
+      { text: "drove / driven", rationale: "สุดยอดมากครับ! ทำครบ 20 ข้อแล้ว Drive - Drove - Driven เก่งมากๆ ครับ!", isCorrect: true },
+      { text: "drived / drived", rationale: "ยังไม่ถูกจ้า คำนี้ลงท้ายด้วย e แต่เราไม่เติม d ต่อท้าย ต้องเปลี่ยนรูปครับ", isCorrect: false },
+      { text: "drove / drove", rationale: "ยังไม่ถูกครับ ช่อง 3 ต้องเปลี่ยนรูปสระสั้นลงและเติม -en กลายเป็น driven นะครับ", isCorrect: false }
     ]
   }
 ];
 
-// เพิ่มเติมข้อมูลให้ครบ 20 คำตามโจทย์ (คำอื่นๆ เช่น Do, Come, Take, Give, Get, Make, Know, Buy, Think, Catch, Teach, Write, Read, Speak, Run, Swim, Sleep, Drink)
+// ฟังก์ชันสลับตำแหน่งใน Array (Fisher-Yates Shuffle)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 
+let shuffledQuizData = [];
 let currentQ = 0;
 let score = 0;
 let selected = null;
 let isChecked = false;
 
+// ฟังก์ชันเริ่มต้นชุดข้อสอบ (ทำสำเนาข้อมูล -> สลับข้อ -> สลับตัวเลือกภายในข้อ)
+function initQuiz() {
+  shuffledQuizData = shuffleArray([...quizData].map(q => ({
+    ...q,
+    options: shuffleArray([...q.options])
+  })));
+  currentQ = 0;
+  score = 0;
+  selected = null;
+  isChecked = false;
+}
+
 function renderQuiz() {
   const container = document.getElementById('quiz-container');
-  const q = quizData[currentQ];
-  const pct = (currentQ / quizData.length) * 100;
+  const q = shuffledQuizData[currentQ];
+  const pct = (currentQ / shuffledQuizData.length) * 100;
 
   container.innerHTML = `
     <div class="header">
@@ -174,7 +284,7 @@ function renderQuiz() {
     <div class="card">
       <div class="progress-container">
         <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-        <span>${currentQ + 1}/${quizData.length}</span>
+        <span>${currentQ + 1}/${shuffledQuizData.length}</span>
       </div>
 
       <div class="hint-box">💡 <b>คำใบ้ช่วยจำ:</b> ${q.hint}</div>
@@ -195,7 +305,7 @@ function renderQuiz() {
         <div class="rationale-box ${q.options[selected].isCorrect ? 'correct' : 'wrong'}">
           <b>${q.options[selected].isCorrect ? '✨ เก่งมาก!' : '❌ ทบทวนกันนิด:'}</b> ${q.options[selected].rationale}
         </div>
-        <button class="btn btn-primary" onclick="nextQ()">${currentQ === quizData.length - 1 ? 'ดูสรุปคะแนน' : 'ข้อถัดไป'}</button>
+        <button class="btn btn-primary" onclick="nextQ()">${currentQ === shuffledQuizData.length - 1 ? 'ดูสรุปคะแนน' : 'ข้อถัดไป'}</button>
       ` : `
         <button class="btn btn-primary" ${selected === null ? 'disabled' : ''} onclick="checkAns()">ยืนยันคำตอบ</button>
       `}
@@ -203,10 +313,10 @@ function renderQuiz() {
   `;
 }
 
-window.selectOpt = (i) => { selected = i; renderQuiz(); };
-window.checkAns = () => { isChecked = true; if(quizData[currentQ].options[selected].isCorrect) score++; renderQuiz(); };
+window.selectOpt = (i) => { if (!isChecked) { selected = i; renderQuiz(); } };
+window.checkAns = () => { isChecked = true; if(shuffledQuizData[currentQ].options[selected].isCorrect) score++; renderQuiz(); };
 window.nextQ = () => {
-  if (currentQ < quizData.length - 1) {
+  if (currentQ < shuffledQuizData.length - 1) {
     currentQ++; selected = null; isChecked = false; renderQuiz();
   } else {
     showSummary();
@@ -219,13 +329,15 @@ function showSummary() {
     <div class="card" style="text-align:center">
       <h2 style="font-size:30px">🏆 จบภารกิจ!</h2>
       <p>คุณทำคะแนนได้</p>
-      <div style="font-size:60px; font-weight:800; color:var(--primary)">${score}/${quizData.length}</div>
+      <div style="font-size:60px; font-weight:800; color:var(--primary)">${score}/${shuffledQuizData.length}</div>
       <p>${score >= 15 ? 'สุดยอดไปเลย! คุณคือปรมาจารย์กริยา 3 ช่อง' : 'พยายามได้ดีมาก! ลองกลับมาเล่นซ้ำเพื่อความแม่นยำนะครับ'}</p>
-      <button class="btn btn-primary" onclick="location.reload()">เล่นใหม่อีกครั้ง</button>
+      <button class="btn btn-primary" onclick="initQuiz(); renderQuiz();">เล่นใหม่อีกครั้ง (สุ่มระบบใหม่)</button>
     </div>
   `;
 }
 
+// เริ่มต้นเรียกใช้งานระบบครั้งแรก
+initQuiz();
 renderQuiz();
 </script>
 </body>
