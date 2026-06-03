@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>V3 Master: เกมกริยา 3 ช่องสำหรับ สกร.</title>
+<title>V3 Master: เกมกริยา 3 ช่องสำหรับ สกร.โนนสัง</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -61,188 +61,96 @@
 
 <script>
 const quizData = [
-  "questions": [
+  {
+    verb: "GO (ไป)",
+    hint: "คำนี้เปลี่ยนรูปไปเลย ไม่มีการเติม -ed นะครับ ให้ท่องว่า 'โก-เว้นท์-กอน'",
+    options: [
+      { text: "went, gone", rationale: "ถูกต้อง! go (ช่อง 1) -> went (ช่อง 2) -> gone (ช่อง 3)", isCorrect: true },
+      { text: "goed, goed", rationale: "ผิดครับ! go เป็นกริยาไม่ปกติ ห้ามเติม -ed เด็ดขาด", isCorrect: false },
+      { text: "goes, gone", rationale: "เกือบถูก! แต่ goes คือรูปที่ใช้กับประธานเอกพจน์ในปัจจุบัน ไม่ใช่ช่อง 2", isCorrect: false }
+    ]
+  },
+  {
+    verb: "EAT (กิน)",
+    hint: "ช่อง 2 แค่สลับตัวอักษรจากคำเดิม ส่วนช่อง 3 เติม -en ต่อท้าย",
+    options: [
+      { text: "ate, eaten", rationale: "ถูกต้อง! eat -> ate (สลับตัวอักษร) -> eaten", isCorrect: true },
+      { text: "eated, eaten", rationale: "ผิดครับ! ช่อง 2 ของ eat ต้องเปลี่ยนรูปเป็น ate", isCorrect: false },
+      { text: "ate, ate", rationale: "ยังไม่ครบ! ช่อง 2 และ 3 ของคำนี้เขียนไม่เหมือนกัน", isCorrect: false }
+    ]
+  },
+  {
+    verb: "'Drink' (ดื่ม) คืออะไร?",
+    hint: "เสียงสระของคำนี้จะเปลี่ยนไปตามเสียง 'อิ - แอะ - อะ",
+    options: [
+      { text: "drank / drunk", rationale: "ถูกต้อง! Drink - Drank - Drunk (ดริ้งค์ - แดร้งค์ - ดรั้งค์) จำง่ายๆ สระจะเปลี่ยนตามลำดับ i -> a -> u ครับ", isCorrect: true },
+      { text: "drinked / drinked", rationale: "ยังไม่ถูกจ้า คำนี้เปลี่ยนสระด้านในเพื่อบอกอดีต ไม่เติม -ed นะครับ", isCorrect: false },
+      { text: "drunk / drank", rationale: "สลับตำแหน่งกันนิดเดียวครับ ช่อง 2 ต้องสระ a (drank) และช่อง 3 ต้องสระ u (drunk) ครับ", isCorrect: false }
+    ]
+  },
+   {
+    verb: "'See' (เห็น) คืออะไร?",
+    hint: "ช่อง 2 เขียนและออกเสียงเหมือนคำว่า 'เลื่อย' หรือเครื่องเล่นม้ากระดก (ซีซอว์)",
+    options: [
+      { text: "saw / seen", rationale: "ยอดเยี่ยม! See - Saw - Seen (ซี - ซอว์ - ซีน) ท่องให้ขึ้นใจได้เลยครับ", isCorrect: true },
+      { text: "seed / seed", rationale: "ยังไม่ใช่ครับ seed แปลว่าเมล็ดพืชครับ ส่วนกริยา see ต้องเปลี่ยนรูปเป็น saw นะครับ", isCorrect: false },
+      { text: "seen / saw", rationale: "สลับตำแหน่งกันครับ ช่อง 2 ต้องเป็น saw และช่อง 3 ต้องเป็น seen ครับ", isCorrect: false }
+    ]
+  },
     {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Go' (ไป) คืออะไร?",
-      "answerOptions": [
-        { "text": "went / gone", "rationale": "ถูกต้องครับ! จำง่ายๆ ว่า Go - Went - Gone (โก - เว้นท์ - กอน) เป็นคำที่ใช้บ่อยที่สุดเลยครับ", "isCorrect": true },
-        { "text": "goed / goed", "rationale": "ยังไม่ถูกครับ! Go เป็นกริยาเปลี่ยนรูป (Irregular Verb) ห้ามเติม -ed นะครับ", "isCorrect": false },
-        { "text": "goes / going", "rationale": "ยังไม่ใช่ครับ อันนี้เป็นรูปเติม -s และเติม -ing สำหรับเหตุการณ์ปัจจุบันและกำลังทำอยู่ครับ", "isCorrect": false }
-      ],
-      "hint": "ลองนึกถึงประโยคอดีต เช่น 'I ___ to school yesterday.' (ฉันไปโรงเรียนมาเมื่อวาน)"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Eat' (กิน) คืออะไร?",
-      "answerOptions": [
-        { "text": "ate / eaten", "rationale": "เก่งมากครับ! Eat - Ate - Eaten (อีท - เอท - อีทเท่น) สังเกตว่าช่อง 2 แค่สลับตัวอักษรจาก eat เป็น ate เองนะ", "isCorrect": true },
-        { "text": "eated / eated", "rationale": "ผิดครับ! กริยากลุ่มนี้ห้ามเติม -ed เด็ดขาด ให้จำว่าเปลี่ยนรูปเป็น ate และ eaten ครับ", "isCorrect": false },
-        { "text": "ate / ate", "rationale": "เกือบถูกแล้วครับ แต่ช่อง 3 ต้องมีตัว n ต่อท้ายกลายเป็น eaten นะครับ", "isCorrect": false }
-      ],
-      "hint": "ช่องที่ 2 ออกเสียงเหมือนคำว่า 'เลขแปด' (Eight) ในภาษาอังกฤษเลยครับ"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Drink' (ดื่ม) คืออะไร?",
-      "answerOptions": [
-        { "text": "drank / drunk", "rationale": "ถูกต้อง! Drink - Drank - Drunk (ดริ้งค์ - แดร้งค์ - ดรั้งค์) จำง่ายๆ สระจะเปลี่ยนตามลำดับ i -> a -> u ครับ", "isCorrect": true },
-        { "text": "drinked / drinked", "rationale": "ยังไม่ถูกจ้า คำนี้เปลี่ยนสระด้านในเพื่อบอกอดีต ไม่เติม -ed นะครับ", "isCorrect": false },
-        { "text": "drunk / drank", "rationale": "สลับตำแหน่งกันนิดเดียวครับ ช่อง 2 ต้องสระ a (drank) และช่อง 3 ต้องสระ u (drunk) ครับ", "isCorrect": false }
-      ],
-      "hint": "เสียงสระของคำนี้จะเปลี่ยนไปตามเสียง 'อิ - แอะ - อะ'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'See' (เห็น) คืออะไร?",
-      "answerOptions": [
-        { "text": "saw / seen", "rationale": "ยอดเยี่ยม! See - Saw - Seen (ซี - ซอว์ - ซีน) ท่องให้ขึ้นใจได้เลยครับ", "isCorrect": true },
-        { "text": "seed / seed", "rationale": "ยังไม่ใช่ครับ seed แปลว่าเมล็ดพืชครับ ส่วนกริยา see ต้องเปลี่ยนรูปเป็น saw นะครับ", "isCorrect": false },
-        { "text": "seen / saw", "rationale": "สลับตำแหน่งกันครับ ช่อง 2 ต้องเป็น saw และช่อง 3 ต้องเป็น seen ครับ", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 เขียนและออกเสียงเหมือนคำว่า 'เลื่อย' หรือเครื่องเล่นม้ากระดก (ซีซอว์)"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Come' (มา) คืออะไร?",
-      "answerOptions": [
-        { "text": "came / come", "rationale": "ถูกต้องที่สุด! Come - Came - Come (คัม - เคม - คัม) ช่อง 1 กับช่อง 3 หน้าตาเหมือนกันเลย จำง่ายมากครับ", "isCorrect": true },
-        { "text": "comed / comed", "rationale": "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปตรงกลางจาก o เป็น a ในช่อง 2 ครับ", "isCorrect": false },
-        { "text": "came / came", "rationale": "เกือบถูกครับ แต่จำไว้ว่าช่อง 3 จะกลับมาหน้าตาเหมือนช่อง 1 คือคำว่า come ครับ", "isCorrect": false }
-      ],
-      "hint": "คำนี้พิเศษตรงที่ กริยาช่องที่ 1 และช่องที่ 3 จะเขียนและออกเสียงเหมือนกันเป๊ะเลย"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Do' (ทำ) คืออะไร?",
-      "answerOptions": [
-        { "text": "did / done", "rationale": "เก่งมากครับ! Do - Did - Done (ดู - ดิด - ดัน) เป็นคำพื้นฐานที่เจอในข้อสอบและชีวิตประจำวันบ่อยที่สุดเลย", "isCorrect": true },
-        { "text": "doed / doed", "rationale": "ไม่ถูกครับ คำว่า do ไม่มีรูปเติม -ed นะครับ ต้องเปลี่ยนรูปไปเลย", "isCorrect": false },
-        { "text": "does / doing", "rationale": "อันนี้เป็นรูปใช้กับประธานเอกพจน์ (does) และรูปกำลังทำ (doing) ครับ ไม่ใช่กริยา 3 ช่องนะ", "isCorrect": false }
-      ],
-      "hint": "ช่องที่ 3 ออกเสียงคล้ายๆ กับคำว่า 'ดัน' (Done) ในภาษาไทยครับ"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Make' (ทำ/สร้าง) คืออะไร?",
-      "answerOptions": [
-        { "text": "made / made", "rationale": "ถูกต้องเลย! Make - Made - Made (เมค - เมด - เมด) ช่อง 2 และ 3 หน้าตาเหมือนกันเลยครับ", "isCorrect": true },
-        { "text": "maked / maked", "rationale": "ยังไม่ถูกครับ คำนี้เราจะไม่เติม -ed แต่จะเปลี่ยนตัว k เป็นตัว d แทนครับ", "isCorrect": false },
-        { "text": "make / made", "rationale": "ยังไม่ครบถ้วนครับ ช่อง 2 และช่อง 3 ต้องเปลี่ยนรูปเป็น made ทั้งคู่เลยครับ", "isCorrect": false }
-      ],
-      "hint": "ลองนึกถึงป้ายสลักหลังสิ่งของหรือของเล่น เช่น '_____ in Thailand'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Buy' (ซื้อ) คืออะไร?",
-      "answerOptions": [
-        { "text": "bought / bought", "rationale": "เก่งมากครับ! Buy - Bought - Bought (บาย - บอท - บอท) เปลี่ยนรูปไปเยอะหน่อย แต่ช่อง 2 กับ 3 เหมือนกันนะ", "isCorrect": true },
-        { "text": "buyed / buyed", "rationale": "ผิดครับ! คำนี้ห้ามเติม -ed นะครับ ต้องเปลี่ยนรูปยาวขึ้นเป็น bought", "isCorrect": false },
-        { "text": "brought / brought", "rationale": "คำนี้หน้าตาคล้ายกันมาก แต่ brought (มีร.เรือ) มาจาก bring ที่แปลว่า 'นำมา' ครับ ส่วน buy (ซื้อ) ต้องไม่มี ร.เรือ (bought)", "isCorrect": false }
-      ],
-      "hint": "ทั้งช่อง 2 และ 3 จะเปลี่ยนรูปยาวขึ้น สะกดด้วย -ought ออกเสียงคล้ายๆ คำว่า 'บอท'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Take' (เอาไป/พาไป/กินยา) คืออะไร?",
-      "answerOptions": [
-        { "text": "took / taken", "rationale": "ยอดเยี่ยม! Take - Took - Taken (เทค - ทุค - เทคเคน) ท่องรวมกันแล้วจำง่ายดีครับ", "isCorrect": true },
-        { "text": "taked / taked", "rationale": "ไม่ใช่ครับ ตัวนี้เป็นกริยาไม่ปกติ (Irregular) จะไม่มีการเติม -ed ต่อท้ายครับ", "isCorrect": false },
-        { "text": "take / took", "rationale": "ยังไม่ถูกครับ ช่อง 2 คือ took ถูกแล้ว แต่ช่อง 3 ต้องเปลี่ยนเป็น taken ครับ", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 ออกเสียงคล้ายคำว่า 'ทุก' ส่วนช่อง 3 จะลงท้ายด้วยเสียง '-เคน'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Write' (เขียน) คืออะไร?",
-      "answerOptions": [
-        { "text": "wrote / written", "rationale": "ถูกต้องครับ! Write - Wrote - Written (ไรท์ - โรท - ริทเท่น) สังเกตช่อง 3 จะมีตัว t สองตัวนะครับ", "isCorrect": true },
-        { "text": "writed / writed", "rationale": "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปสระด้านในครับ", "isCorrect": false },
-        { "text": "wrote / wrote", "rationale": "ยังไม่ใช่จ้า ช่อง 3 ต้องเปลี่ยนรูปแบบเป็น written ครับ จะไม่ซ้ำกับช่อง 2", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 จะเปลี่ยนสระเป็นสระโอ (Wrote) ส่วนช่อง 3 ออกเสียงว่า 'ริทเท่น'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Read' (อ่าน) คืออะไร?",
-      "answerOptions": [
-        { "text": "read / read", "rationale": "เก่งมาก! Read - Read - Read เขียนเหมือนเดิมเป๊ะทุกช่อง! แต่ช่อง 2 และ 3 จะเปลี่ยนไปออกเสียงว่า 'เรด' (เหมือนสีแดง) ครับ", "isCorrect": true },
-        { "text": "readed / readed", "rationale": "ผิดครับ คำนี้พิเศษมาก ไม่มีการเติม -ed ใดๆ ทั้งสิ้น เขียนเหมือนช่อง 1 เลย", "isCorrect": false },
-        { "text": "red / red", "rationale": "เกือบถูกในเรื่องเสียงครับ แต่อันนี้เป็นคำว่า Red ที่แปลว่าสีแดง รูปกริยายังต้องสะกดว่า read เหมือนเดิมนะ", "isCorrect": false }
-      ],
-      "hint": "คำนี้มหัศจรรย์มาก เพราะตัวเขียนสะกดเหมือนช่องที่ 1 ทุกประการ แต่ออกเสียงไม่เหมือนกัน!"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Sleep' (นอนหลับ) คืออะไร?",
-      "answerOptions": [
-        { "text": "slept / slept", "rationale": "ถูกต้องครับ! Sleep - Slept - Slept (สลีป - สเลปต์ - สเลปต์) ช่อง 2 กับ 3 หน้าตาเหมือนกันเลย", "isCorrect": true },
-        { "text": "sleeped / sleeped", "rationale": "ยังไม่ถูกจ้า คำนี้ห้ามเติม -ed นะครับ วิธีจำคือให้ลดตัว e ลงหนึ่งตัวแล้วเติม t ข้างหลังแทน", "isCorrect": false },
-        { "text": "slaped / slaped", "rationale": "ไม่ใช่ครับ คำนี้เปลี่ยนรูปเป็น slept ครับ ส่วน slap แปลว่าตบครับคนละคำกันเลย", "isCorrect": false }
-      ],
-      "hint": "เทคนิคการจำคือ ตัดตัว e ออกไปหนึ่งตัว แล้วเติมตัว t ไว้ข้างหลังทั้งช่อง 2 และ 3"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Run' (วิ่ง) คืออะไร?",
-      "answerOptions": [
-        { "text": "ran / run", "rationale": "ใช่เลย! Run - Ran - Run (รัน - แรน - รัน) วิ่งสลับรูปสระอากลับมาเป็นสระอุ (ช่อง 1 กับ 3 เหมือนกัน)", "isCorrect": true },
-        { "text": "runed / runed", "rationale": "ไม่ถูกครับ คำนี้เป็นกริยาเปลี่ยนรูป ห้ามเติม -ed นะครับ", "isCorrect": false },
-        { "text": "ran / ran", "rationale": "เกือบถูกครับ แต่อย่าลืมว่ากริยาช่อง 3 ของคำนี้ต้องเปลี่ยนกลับมาเป็น run เหมือนช่อง 1 ครับ", "isCorrect": false }
-      ],
-      "hint": "กฎเหมือนคำว่า Come เลยครับ คือกริยาช่องที่ 1 และช่องที่ 3 จะหน้าตาเหมือนกันเป๊ะ"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Speak' (พูด) คืออะไร?",
-      "answerOptions": [
-        { "text": "spoke / spoken", "rationale": "ถูกต้อง! Speak - Spoke - Spoken (สปีค - สโปค - สโปคเคน) คำนี้ใช้บ่อยมากเวลาพูดถึงการสนทนาภาษาอังกฤษครับ", "isCorrect": true },
-        { "text": "speaked / speaked", "rationale": "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปสระแบบนี้ครับ", "isCorrect": false },
-        { "text": "spoke / spoke", "rationale": "ยังไม่ถูกครับ ช่อง 3 ต้องเติมท้ายด้วย -en กลายเป็น spoken นะครับ", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 ออกเสียงสระโอ (Spoke) ส่วนช่อง 3 จะนำช่อง 2 มาเติม -en ไว้ข้างหลัง"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Give' (ให้) คืออะไร?",
-      "answerOptions": [
-        { "text": "gave / given", "rationale": "เก่งมาก! Give - Gave - Given (กิฝ - เกฝ - กิฝเฝิน) จำง่ายๆ ช่อง 3 แค่เอาช่อง 1 มาเติมตัว n เข้าไปตัวเดียวเองครับ", "isCorrect": true },
-        { "text": "gived / gived", "rationale": "ไม่ถูกครับ คำนี้เปลี่ยนรูปสระด้านใน ไม่เติม -ed นะครับ", "isCorrect": false },
-        { "text": "gave / givened", "rationale": "ไม่มีการสะกดซ้อนกันแบบนี้ครับ ช่อง 3 คือ given เติมแค่ n ตัวเดียวพอครับ", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 เปลี่ยนจากตัว i เป็นตัว a ส่วนช่อง 3 ออกเสียงว่า 'กิฝ-เฝิน'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Swim' (ว่ายน้ำ) คืออะไร?",
-      "answerOptions": [
-        { "text": "swam / swum", "rationale": "ถูกต้อง! Swim - Swam - Swum (สวิม - สแวม - สวัม) ท่องเรียงตามสระ อิ - แอะ - อะ ได้เลยเหมือนคำว่า Drink ครับ", "isCorrect": true },
-        { "text": "swimed / swimed", "rationale": "ยังไม่ใช่ครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนสระอักษรข้างใน", "isCorrect": false },
-        { "text": "swum / swam", "rationale": "สลับตำแหน่งกันเล็กน้อยครับ ช่อง 2 ต้องเป็นสระ a (swam) และช่อง 3 เป็นสระ u (swum) ครับ", "isCorrect": false }
-      ],
-      "hint": "เปลี่ยนสระด้านในตามลำดับตัวอักษร i -> a -> u"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Think' (คิด) คืออะไร?",
-      "answerOptions": [
-        { "text": "thought / thought", "rationale": "ยอดเยี่ยมมาก! Think - Thought - Thought (ธิงค์ - ธอท - ธอท) ช่อง 2 และ 3 หน้าตาเหมือนกันเป๊ะเลยครับ", "isCorrect": true },
-        { "text": "thinked / thinked", "rationale": "ผิดครับ คำนี้เวลาเป็นอดีตจะเปลี่ยนโครงสร้างยาวขึ้น ไม่มีการเติม -ed นะครับ", "isCorrect": false },
-        { "text": "thank / thank", "rationale": "ยังไม่ใช่ครับ thank แปลว่า 'ขอบคุณ' (เช่น Thank you) ส่วนรูปอดีตของ think (คิด) ต้องเป็น thought ครับ", "isCorrect": false }
-      ],
-      "hint": "เปลี่ยนรูปยาวขึ้นเหมือนคำว่า Buy เลยครับ และทั้งสองช่องออกเสียงว่า 'ธอท'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Know' (รู้/รู้จัก) คืออะไร?",
-      "answerOptions": [
-        { "text": "knew / known", "rationale": "เก่งมากครับ! Know - Knew - Known (โน - นิว - โนน) จำเทคนิคเปลี่ยน o -> e ในช่อง 2 และเติม n ในช่อง 3 นะครับ", "isCorrect": true },
-        { "text": "knowed / knowed", "rationale": "ไม่ถูกครับ คำนี้ห้ามเติม -ed เด็ดขาดเลยนะ ต้องเปลี่ยนรูปครับ", "isCorrect": false },
-        { "text": "knew / knew", "rationale": "เกือบถูกครับ แต่ช่อง 3 ต้องเพิ่มตัว n ต่อท้ายกลายเป็น known ครับจะไม่เหมือนช่อง 2", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 ออกเสียงคล้ายๆ คำว่า 'ใหม่' (New) ส่วนช่อง 3 ออกเสียงว่า 'โนน'"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Cut' (ตัด) คืออะไร?",
-      "answerOptions": [
-        { "text": "cut / cut", "rationale": "ถูกต้องที่สุด! Cut - Cut - Cut (คัท - คัท - คัท) เหมือนกันหมดทุกช่อง จำง่ายสบายใจที่สุดเลยครับคำนี้", "isCorrect": true },
-        { "text": "cuted / cuted", "rationale": "ผิดครับ ไม่ต้องเติม -ed ใดๆ ทั้งสิ้น เขียนเหมือนช่อง 1 ได้ทันทีเลยครับ", "isCorrect": false },
-        { "text": "cat / cut", "rationale": "ยังไม่ใช่ครับ cat แปลว่าแมวครับ ส่วนกริยา cut รูปอดีตก็ยังคงเป็น cut เหมือนเดิมนะ", "isCorrect": false }
-      ],
-      "hint": "คำนี้ใจดีกับคนเรียนที่สุดในโลก เพราะหน้าตาและเสียงเหมือนกันหมดทั้ง 3 ช่องเลย!"
-    },
-    {
-      "question": "คำกริยาช่อง 2 และ 3 ของ 'Drive' (ขับรถ) คืออะไร?",
-      "answerOptions": [
-        { "text": "drove / driven", "rationale": "สุดยอดมากครับ! ทำครบ 20 ข้อแล้ว Drive - Drove - Driven (ไดรฝ - โดรฝ - ดริฝเฝิน) เก่งมากๆ ครับ!", "isCorrect": true },
-        { "text": "drived / drived", "rationale": "ยังไม่ถูกจ้า คำนี้ลงท้ายด้วย e แต่เราไม่เติม d ต่อท้ายเฉดเช่นกริยาปกติ ต้องเปลี่ยนรูปครับ", "isCorrect": false },
-        { "text": "drove / drove", "rationale": "ยังไม่ถูกครับ ช่อง 3 ต้องเปลี่ยนรูปสระสั้นลงและเติม -en กลายเป็น driven นะครับ", "isCorrect": false }
-      ],
-      "hint": "ช่อง 2 เปลี่ยนเป็นสระโอ (Drove) ส่วนช่อง 3 เปลี่ยนเป็นเสียงสระอิสั้นๆ แล้วเติม -en (Driven)"
-    }
-  ]
+    verb: "คำกริยาช่อง 2 และ 3 ของ 'Come' (มา) คืออะไร?",
+    hint: "ช่อง 2 เขียนและออกเสียงเหมือนคำว่า 'เลื่อย' หรือเครื่องเล่นม้ากระดก (ซีซอว์)",
+    options: [
+      { text: "came / come", rationale: "ถูกต้องที่สุด! Come - Came - Come (คัม - เคม - คัม) ช่อง 1 กับช่อง 3 หน้าตาเหมือนกันเลย จำง่ายมากครับ", isCorrect: true },
+      { text: "comed / comed", rationale: "ยังไม่ถูกครับ คำนี้ห้ามเติม -ed นะ ต้องเปลี่ยนรูปตรงกลางจาก o เป็น a ในช่อง 2 ครับ", isCorrect: false },
+      { text: "came / came", rationale: "เกือบถูกครับ แต่จำไว้ว่าช่อง 3 จะกลับมาหน้าตาเหมือนช่อง 1 คือคำว่า come ครับ", isCorrect: false }
+    ]
+  },
+   {
+    verb: "คำกริยาช่อง 2 และ 3 ของ 'Do' (ทำ) คืออะไร?",
+    hint: "ช่องที่ 3 ออกเสียงคล้ายๆ กับคำว่า 'ดัน' (Done) ในภาษาไทยครับ",
+    options: [
+      { text: "did / done", rationale: "เก่งมากครับ! Do - Did - Done (ดู - ดิด - ดัน) เป็นคำพื้นฐานที่เจอในข้อสอบและชีวิตประจำวันบ่อยที่สุดเลย", isCorrect: true },
+      { text: "doed / doed", rationale: "ไม่ถูกครับ คำว่า do ไม่มีรูปเติม -ed นะครับ ต้องเปลี่ยนรูปไปเลย", isCorrect: false },
+      { text: "does / doing", rationale: "อันนี้เป็นรูปใช้กับประธานเอกพจน์ (does) และรูปกำลังทำ (doing) ครับ ไม่ใช่กริยา 3 ช่องนะ" , isCorrect: false }
+    ]
+  },
+   {
+    verb:  "คำกริยาช่อง 2 และ 3 ของ 'Make' (ทำ/สร้าง) คืออะไร?",
+    hint: "ลองนึกถึงป้ายสลักหลังสิ่งของหรือของเล่น เช่น '_____ in Thailand'",
+    options: [
+      { text: "made / made", rationale: "ถูกต้องเลย! Make - Made - Made (เมค - เมด - เมด) ช่อง 2 และ 3 หน้าตาเหมือนกันเลยครับ", isCorrect: true },
+      { text: "maked / maked", rationale: "ยังไม่ถูกครับ คำนี้เราจะไม่เติม -ed แต่จะเปลี่ยนตัว k เป็นตัว d แทนครับ", isCorrect: false },
+      { text: "make / made", rationale: "ยังไม่ครบถ้วนครับ ช่อง 2 และช่อง 3 ต้องเปลี่ยนรูปเป็น made ทั้งคู่เลยครับ" , isCorrect: false }
+    ]
+  },
+   {
+    verb:  "คำกริยาช่อง 2 และ 3 ของ 'Buy' (ซื้อ) คืออะไร?",
+    hint: "ทั้งช่อง 2 และ 3 จะเปลี่ยนรูปยาวขึ้น สะกดด้วย -ought ออกเสียงคล้ายๆ คำว่า 'บอท'",
+    options: [
+      { text: "bought / bought", rationale: "เก่งมากครับ! Buy - Bought - Bought (บาย - บอท - บอท) เปลี่ยนรูปไปเยอะหน่อย แต่ช่อง 2 กับ 3 เหมือนกันนะ", isCorrect: true },
+      { text: "buyed / buyed", rationale: "ผิดครับ! คำนี้ห้ามเติม -ed นะครับ ต้องเปลี่ยนรูปยาวขึ้นเป็น bought", isCorrect: false },
+      { text: "brought / brought", rationale: "คำนี้หน้าตาคล้ายกันมาก แต่ brought (มีร.เรือ) มาจาก bring ที่แปลว่า 'นำมา' ครับ ส่วน buy (ซื้อ) ต้องไม่มี ร.เรือ (bought)" , isCorrect: false }
+    ]
+  },
+  {
+    verb:  "คำกริยาช่อง 2 และ 3 ของ 'Take' (เอาไป/พาไป/กินยา) คืออะไร?",
+    hint: "ช่อง 2 ออกเสียงคล้ายคำว่า 'ทุก' ส่วนช่อง 3 จะลงท้ายด้วยเสียง '-เคน'",
+    options: [
+      { text: "took / taken", rationale: "เลิศ! Take - Took - Taken (เทค - ทุค - เทคเคน) ท่องรวมกันแล้วจำง่ายดีครับ", isCorrect: true },
+      { text: "taked / taked", rationale: "ไม่ใช่ครับ ตัวนี้เป็นกริยาไม่ปกติ (Irregular) จะไม่มีการเติม -ed ต่อท้ายครับ", isCorrect: false },
+      { text: "take / took", rationale: "ยังไม่ถูกครับ ช่อง 2 คือ took ถูกแล้ว แต่ช่อง 3 ต้องเปลี่ยนเป็น taken ครับ" , isCorrect: false }
+    ]
+  },
+  {
+    verb: "SEE (เห็น)",
+    hint: "จำง่ายๆ ว่า 'ซี-ซอ-ซีน' ช่อง 2 จะคล้ายคำว่า 'เลื่อย' ในภาษาอังกฤษ",
+    options: [
+      { text: "saw, seen", rationale: "เป๊ะมาก! see -> saw -> seen", isCorrect: true },
+      { text: "seed, seen", rationale: "อย่าเผลอเติม -ed นะครับ คำนี้ต้องเปลี่ยนรูป", isCorrect: false },
+      { text: "saw, saw", rationale: "ช่อง 3 ต้องมีตัว n ต่อท้าย กลายเป็น seen ครับ", isCorrect: false }
+    ]
+  }
 ];
 
 // เพิ่มเติมข้อมูลให้ครบ 20 คำตามโจทย์ (คำอื่นๆ เช่น Do, Come, Take, Give, Get, Make, Know, Buy, Think, Catch, Teach, Write, Read, Speak, Run, Swim, Sleep, Drink)
@@ -260,7 +168,7 @@ function renderQuiz() {
   container.innerHTML = `
     <div class="header">
       <h1>V3 Master: ภารกิจกริยา 3 ช่อง</h1>
-      <p>สำหรับนักศึกษา สกร. เลเวลพื้นฐาน</p>
+      <p>สำหรับนักศึกษา สกร.โนนสัง เลเวลพื้นฐาน</p>
     </div>
 
     <div class="card">
