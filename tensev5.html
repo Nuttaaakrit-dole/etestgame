@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra-Hard Applied Grammar Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ธีม Cyber-Neon Obsidian & Platinum สำหรับด่านจำลองระดับสูงสุด */
+    --primary: #6b21a8; --primary-dark: #2e1065; --primary-light: #faf5ff;
+    --accent: #a855f7; --platinum: #cbd5e1;
+    --success: #059669; --success-light: #ecfdf5;
+    --danger: #dc2626; --danger-light: #fef2f2;
+    --warning: #b45309; --warning-light: #fffbeb;
+    --dark-bg: #0f172a; --text-dark: #1e293b;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: #f1f5f9; color: var(--text-dark); padding: 20px 10px; line-height: 1.6; }
+  .container { max-width: 650px; margin: 0 auto; }
+  
+  .header { background: linear-gradient(135deg, var(--dark-bg), var(--primary-dark)); color: white; padding: 30px 25px; border-radius: 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(107, 33, 168, 0.3); border: 2px solid var(--accent); }
+  .header h1 { margin: 0 0 10px 0; font-size: 26px; letter-spacing: 1px; color: #f8fafc; }
+  .header p { margin: 0; font-size: 14px; color: var(--platinum); }
+  
+  .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+
+  /* Progress Bar */
+  .progress-container { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; font-size: 14px; font-weight: 700; color: var(--primary-dark); }
+  .progress-bar-bg { flex-grow: 1; background: #e2e8f0; height: 12px; border-radius: 6px; overflow: hidden; }
+  .progress-bar-fill { background: linear-gradient(90deg, var(--primary), var(--accent)); height: 100%; width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  /* Hint & Question */
+  .hint-box { background: var(--warning-light); border-left: 5px solid var(--warning); padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; color: #78350f; font-weight: 500; line-height: 1.5; }
+  .question-text { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #020617; background: var(--primary-light); padding: 20px; border-radius: 12px; text-align: left; border: 1px solid #e9d5ff; line-height: 1.6; }
+  .instruction { font-size: 14px; color: #475569; margin-bottom: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option-item { padding: 16px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.2s ease; font-size: 15px; font-weight: 500; color: #334155; }
+  .option-item:hover { border-color: var(--accent); background: var(--primary-light); transform: translateY(-1px); }
+  .option-item.selected { border-color: var(--primary); background: #f3e8ff; color: var(--primary-dark); font-weight: 600; }
+  .option-item.correct { border-color: var(--success); background: var(--success-light); color: var(--success); font-weight: 600; }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); font-weight: 600; }
+  .option-item.disabled { pointer-events: none; }
+
+  /* Rationale */
+  .rationale-box { margin-top: 22px; padding: 18px; border-radius: 12px; font-size: 14px; line-height: 1.6; animation: fadeIn 0.3s ease-in-out; }
+  .rationale-box.correct { background: var(--success-light); border: 1px dashed var(--success); color: #064e3b; }
+  .rationale-box.wrong { background: var(--danger-light); border: 1px dashed var(--danger); color: #7f1d1d; }
+
+  /* Evaluation Box */
+  .evaluation-box { margin: 22px 0; padding: 20px; border-radius: 14px; background: #f8fafc; text-align: left; border-left: 6px solid #cbd5e1; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; animation: fadeIn 0.5s ease; }
+
+  .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 15px; letter-spacing: 0.5px; }
+  .btn-primary { background: linear-gradient(135deg, var(--dark-bg), var(--primary-dark)); color: white; border: 1px solid var(--accent); box-shadow: 0 4px 12px rgba(107,33,168,0.2); }
+  .btn-primary:hover { filter: brightness(1.2); }
+  .btn-primary:disabled { background: #cbd5e1; border: none; color: #94a3b8; cursor: not-allowed; box-shadow: none; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="quiz-container">
+    <!-- ควบคุมการเรนเดอร์โดย JavaScript -->
+  </div>
+</div>
+
+<script>
+// คลังโจทย์ระดับประยุกต์ใช้วิเคราะห์สถานการณ์จริง (Ultra-Hard / Applied Syntax) จำนวน 20 ข้อ
+const quizData = [
+  {
+    sentence: "Corporate counsel strongly disapproved of ___________ the nondisclosure agreement without prior executive authorization.",
+    hint: "การประยุกต์ใช้ในสัญญาธุรกิจ (Genitive Gerund): ในภาษาทางการระดับสูง เมื่อคำนามรูป -ing (Gerund) ทำหน้าที่เป็นกรรมของบุพบท (disapproved of...) และมีผู้กระทำระบุไว้ข้างหน้า กฎดั้งเดิมระบุให้คำนามหรือสรรพนามหน้านั้นต้องอยู่ในรูปแสดงความเป็นเจ้าของเพื่อไม่ให้หน้าที่ทางไวยากรณ์คลุมเครือ",
+    options: [
+      { text: "the project manager signing", rationale: "โดนหลอกเพราะภาษาพูด! รูปนี้ใช้ทั่วไปในบทสนทนา แต่ในเอกสารกฎหมายสัญญาจะถือว่าบกพร่องทางโครงสร้าง เพราะทำให้สับสนว่ารังเกียจตัวผู้จัดการ (manager) หรือรังเกียจการเซ็นสัญญา (signing) ครับ", isCorrect: false },
+      { text: "the project manager's signing", rationale: "ถูกต้องเฉียบคมมาก! ในบริบททางการอย่างเอกสารกฎหมาย การใช้รูปกริยานาม (Gerund) จำเป็นต้องมีตัวขยายแสดงความเป็นเจ้าของ (Possessive/Genitive) นำหน้า เพื่อล็อกให้ชัดเจนว่าสิ่งที่สภาทนายความไม่เห็นชอบคือ 'การเซ็นชื่อ' ของคนๆ นั้นครับ", isCorrect: true },
+      { text: "the project manager to sign", rationale: "ผิดโครงสร้างครับ หลังบุพบท 'of' ไม่สามารถตามด้วยโครงสร้าง Infinitive with to ('to sign') ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Under no circumstances ___________ to access the core mainframe database unless accompanied by a security auditor.",
+    hint: "ข้อบังคับด้านความมั่นคงไซเบอร์ (Double Inversion/Condition): เมื่อประโยคขึ้นต้นด้วยกลุ่มคำปฏิเสธเด็ดขาด (Under no circumstances) โครงสร้างประโยคหลักจะถูกบังคับให้สลับที่ (Inversion) ทันที พิจารณาตำแหน่งกริยาช่วยและประธานให้ดี",
+    options: [
+      { text: "personnel are permitted", rationale: "ผิดครับ รูปนี้เป็นประโยคบอกเล่าธรรมดา ขัดต่อกฎเหล็กไวยากรณ์ขั้นสูงที่ว่าหากมีข้อความปฏิเสธเด็ดขาดขึ้นต้นประโยค จะต้องสลับตำแหน่งเสมอครับ", isCorrect: false },
+      { text: "are personnel permitted", rationale: "สุดยอดมาก! นี่คือการประยุกต์ใช้ข้อบังคับสากล กริยาช่วย 'are' ต้องถูกดึงมาวางไว้หน้าประธาน 'personnel' ทันทีเมื่อขึ้นต้นด้วยวลีปฏิเสธเชิงจำกัดโครงสร้าง", isCorrect: true },
+      { text: "are personnel permitting", rationale: "สลับตำแหน่งถูก แต่ผิดมิติ Passive Voice ครับ พนักงานต้อง 'ได้รับอนุญาต' (are permitted) ไม่ใช่ไปเดินอนุญาตผู้อื่นด้วยตัวเองครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The executive board recommended that the emergency capital ___________ until the auditing team thoroughly reports its quarterly findings.",
+    hint: "การประยุกต์ใช้ในรายงานการประชุม (Subjunctive with Passive/Negative): คำว่า 'recommended that' บังคับให้ประโยคย่อยใช้รูป Subjunctive Mood (กริยาฐานดั้งเดิม/V.inf) และเงินทุนสำรองต้อง 'ไม่ถูกจัดสรร' (กระทำตัวเองไม่ได้)",
+    options: [
+      { text: "not be allocated", rationale: "สมฐานะยอดเซียน! หลังโครงสร้างคำสั่ง/ข้อเสนอแนะ ในรูปปฏิเสธเราจะวาง 'not' ไว้หน้ากริยาฐานดั้งเดิมได้เลย และใช้ 'be allocated' เพื่อคงรูปถูกกระทำโดยไม่มีการผันกริยาใดๆ", isCorrect: true },
+      { text: "is not allocated", rationale: "ตกม้าตายเพราะลืมกฎ Subjunctive! ห้ามผันกริยาเป็น is/am/are หลังกริยาบังคับหรือแนะนำเด็ดขาดครับแม้ว่าประธานจะเป็นเอกพจน์", isCorrect: false },
+      { text: "should not allocated", rationale: "ผิดโครงสร้างครับ หลัง should ต้องเป็นกริยาไม่ผันช่อง 1 ดั้งเดิม หากจะใช้ passive ต้องแก้เป็น should not be allocated ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The computational efficiency of the newly integrated cloud algorithm is significantly higher than ___________ of the legacy system.",
+    hint: "การวิเคราะห์ข้อมูลเปรียบเทียบ (Asymmetrical Comparison): การเปรียบเทียบในเชิงวิชาการ ต้องเทียบสิ่งที่เป็นประเภทเดียวกัน ประโยคนี้กำลังเทียบ 'ประสิทธิภาพ (efficiency)' ซึ่งเป็นนามเอกพจน์ ไม่ใช่เปรียบเทียบตัวระบบ",
+    options: [
+      { text: "that", rationale: "ถูกต้องแม่นยำ! คำว่า 'that' ในที่นี้ทำหน้าที่เป็นสรรพนามแทนคำว่า 'the efficiency' เพื่อหลีกเลี่ยงการใช้คำซ้ำ และทำให้โครงสร้างการเปรียบเทียบขนานกันอย่างสมบูรณ์แบบ", isCorrect: true },
+      { text: "those", rationale: "ผิดพจน์ครับ! 'those' จะใช้แทนคำนามที่เป็นพหูพจน์ แต่คำนามหลักที่เป็นแกนกลางในการเปรียบเทียบข้อนี้คือ 'efficiency' ซึ่งเป็นเอกพจน์ครับ", isCorrect: false },
+      { text: "what", rationale: "ไม่สามารถใช้เชื่อมในโครงสร้างเปรียบเทียบชี้เฉพาะเจาะจงแบบที่มีบุพบท 'of' ตามหลังในลักษณะนี้ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The global research foundation will grant the prestigious fellowship to ___________ the international selection panel deems most deserving.",
+    hint: "การคัดเลือกบุคคลในองค์กร (Complex Relative Case): วิเคราะห์โครงสร้างประโยคย่อยหลังคำว่า to ให้ดี วลี 'the international selection panel deems...' (คณะกรรมการพิจารณาว่า...) มีประธานและกริยาครบแล้ว ตัวสรรพนามที่หายไปทำหน้าที่เป็น 'กรรม' ของกริยา deems",
+    options: [
+      { text: "whoever", rationale: "โดนหลอกบ่อยที่สุด! หลายคนคิดว่าตามหลังบุพบท to ต้องเป็นประธานของประโยคย่อย แต่โครงสร้างด้านหลังมีประธานของตัวเองอยู่แล้ว ตัวที่ขาดไปคือกรรมครับ", isCorrect: false },
+      { text: "whomever", rationale: "อัจฉริยะมาก! ตัวสรรพนามนี้ทำหน้าที่เป็น Object (กรรม) ของกริยา 'deems' ในประโยคย่อยย่อย สรรพนามเชื่อมจึงต้องใช้รูป Objective Case คือ whomever เท่านั้นในภาษาเขียนระดับหรู", isCorrect: true },
+      { text: "whosever", rationale: "ผิดความหมายโดยสิ้นเชิงครับ สรรพนามนี้ใช้แสดงความเป็นเจ้าของ แต่บริบทนี้ต้องการระบุตัวบุคคลผู้ถูกเลือกครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ for the swift and decisive intervention of the central bank last week, the country’s retail economy would be in ruins today.",
+    hint: "การวิเคราะห์วิกฤตเศรษฐกิจ (Mixed Conditional Inversion): สังเกตตัวบ่งชี้กาลเวลา ฝั่งเงื่อนไขเกิด 'สัปดาห์ที่แล้ว (last week)' แต่ฝั่งผลลัพธ์เกิด 'วันนี้ (today)' และประโยคมีการตัด If ออกเพื่อสลับโครงสร้าง",
+    options: [
+      { text: "Had it not been", rationale: "ถูกต้องที่สุด! เป็นการละรูป If ของเงื่อนไขผสม (Mixed Conditional) โดยฝั่งอดีตใช้โครงสร้าง Had it not been for... (มาจาก If it had not been for...) ส่งผลมายังปัจจุบันที่เป็น would + V.1", isCorrect: true },
+      { text: "Were it not", rationale: "เกือบถูก! โครงสร้าง Were it not for... จะใช้สมมุติเหตุการณ์ที่เป็นไปไม่ได้ในปัจจุบันเท่านั้น แต่ในโจทย์ระบุชัดเจนว่าวิกฤตได้รับการแก้ไขไปแล้วเมื่อสัปดาห์ก่อน (last week)", isCorrect: false },
+      { text: "If it was not", rationale: "ผิดทั้งหลักโครงสร้างเงื่อนไขสมมุติ (ทางการจะไม่ใช้ was กับเหตุการณ์สมมุติเชิงโครงสร้าง) และผิดเรื่องของกาลเวลาที่ไม่สอดคล้องกันครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "This is the precise socio-economic framework ___________ the entire macroeconomic model is predicated.",
+    hint: "สำนวนวิชาการและการใช้บุพบทควบคู่ (Pied-Piping Relative Clause): คำกริยา 'predicate' (ตั้งอยู่บนพื้นฐานของ...) เป็นกริยาที่ต้องใช้คู่กับคำบุพบทเฉพาะตัวคือคำว่า 'upon' หรือ 'on' เสมอเมื่อโยกมาไว้ข้างหน้า สรรพนามเชื่อมต้องสอดรับกัน",
+    options: [
+      { text: "upon which", rationale: "เก่งมากครับเซียน! มาจากวลีเดิมคือ 'is predicated upon the framework' เมื่อย้ายขึ้นมาเขียนแบบประณีตในงานวิจัย จึงดึงบุพบทขึ้นมาคู่กันเป็น upon which สวยงามและถูกต้องตามหลักไวยากรณ์ชั้นสูง", isCorrect: true },
+      { text: "which", rationale: "โดนหลอกเต็มๆ! หากเลือก which โครงสร้างประโยคจะขาดคำบุพบทลงล็อกท้ายประโยค ทำให้ประโยคพิการเนื่องจากขาดคำว่า on หรือ upon ครับ", isCorrect: false },
+      { text: "where", rationale: "ไม่ถูกครับ แม้ framework จะดูเหมือนบริบทเชิงระบบ แต่ตามหลักการจับคู่กริยาตัวแปรเฉพาะพึ่งพา (collocation) predicate บังคับใช้คู่กับกลุ่มคำบุพบทตระกูล on/upon เท่านั้นครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The chief archeologist discovered a highly controversial, ___________ manuscript hidden deep within the limestone vault.",
+    hint: "การจัดระเบียบคำคุณศัพท์ในรายงานวิทยาศาสตร์ (Adjective Ordering): ลำดับคำคุณศัพท์ภาษาอังกฤษ (Royal Order of Adjectives) มีการเรียงลำดับที่เป็นระบบสากล: Opinion (ความเห็น) -> Age (อายุ) -> Origin (แหล่งกำเนid)",
+    options: [
+      { text: "rare ancient Egyptian", rationale: "ถูกต้อง ไร้ที่ติ! เรียงตามกฎสากลอย่างแม่นยำ: rare (Opinion/ความเห็นหายาก) -> ancient (Age/อายุเก่าแก่) -> Egyptian (Origin/แหล่งกำเนิดสัญชาติ)", isCorrect: true },
+      { text: "Egyptian rare ancient", rationale: "ผิดมหันต์ครับ เอาแหล่งกำเนิดสัญชาติ (Origin) มาวางตัดหน้าคำบอกอายุและความคิดเห็น ผิดกฎการรับรู้ทางภาษาศาสตร์ครับ", isCorrect: false },
+      { text: "ancient rare Egyptian", rationale: "เกือบดีแต่ยังไม่ถูกครับ ตามกฎการรับรู้เชิงภาษา ต้องเอาความเห็นส่วนตัวหรือลักษณะเด่นที่แปรผันได้ (rare) ขึ้นก่อนอายุทางกายภาพ (ancient) ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The fragmentary legal text discovered in Rome appears ___________ by a single imperial scribe over several consecutive decades.",
+    hint: "การวิเคราะห์หลักฐานประวัติศาสตร์ (Perfect Passive Infinitive): ตัวเอกสารปรากฏอยู่ในปัจจุบัน (appears) แต่กระบวนการ 'ถูกเขียนขึ้น (write)' เกิดขึ้นและเสร็จสิ้นสมบูรณ์ไปแล้วในอดีตยุคโรมัน โครงสร้างแสดงเหตุการณ์ก่อนหน้าในรูปถูกกระทำคืออะไร",
+    options: [
+      { text: "to have been written", rationale: "เฉียบคมขั้นสุด! การประยุกต์ใช้ Perfect Infinitive ในรูป Passive Voice (to have been + V.3) ใช้ระบุว่าเหตุการณ์การถูกเขียนนั้นเกิดขึ้นเสร็จสิ้นสมบูรณ์ไปก่อนเวลาที่ตัวเอกสารจะมาปรากฏให้เห็นในปัจจุบัน", isCorrect: true },
+      { text: "to be writing", rationale: "ผิดโครงสร้างครับ โครงสร้างนี้หมายความว่าตัวเศษกระดาษกฎหมายกำลังขยับมือจับปากกาเขียนตัวเองอยู่ในปัจจุบัน ซึ่งผิดความจริงทางกายภาพ", isCorrect: false },
+      { text: "to write", rationale: "ผิดทั้งมิติกาลเวลาและมิติผู้กระทำ เพราะเศษข้อความกฎหมายไม่สามารถลุกขึ้นมาเขียนสิ่งใดๆ ด้วยตัวเองได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________, the crucial international football match was indefinitely rescheduled for the following month.",
+    hint: "โครงสร้างประโยคอิสระในรายงานข่าว (Absolute Construction): ประโยคหลักมีประธานและกริยาครบแล้วคือ 'the match was rescheduled' ประโยคส่วนหน้าต้องการบอกเหตุผลเรื่องฝนตกโดยไม่มีคำเชื่อม ตัวประโยคส่วนหน้าจึงต้องมีประธานและโครงสร้างกริยา (Participle) เป็นของตัวเองอย่างอิสระ",
+    options: [
+      { text: "The rain having flooded the pitch", rationale: "สมฐานะยอดฝีมือ! นี่คือโครงสร้างขั้นสูงที่เรียกว่า 'Absolute Construction' ประธานส่วนหน้า (The rain) มีกริยาขยายของตัวเอง (having flooded) สื่อเหตุผลสมบูรณ์โดยไม่ต้องพึ่งคำเชื่อมอย่าง Because", isCorrect: true },
+      { text: "Flooded the pitch by rain", rationale: "โครงสร้างชวนสับสนและผิดเพี้ยน! รูปนี้ทำให้กลายเป็นส่วนขยายลอยที่ไประบุว่า ตัวการแข่งขันฟุตบอล (match) เป็นผู้ลุกขึ้นมาท่วมสนามฟุตบอลด้วยตัวเอง ซึ่งผิดหลักไวยากรณ์", isCorrect: false },
+      { text: "Having flooded the pitch by rain", rationale: "ผิดกฎเหล็กประโยคขยาย (Dangling Modifier)! โครงสร้างนี้จะทึกทักว่าประธานประโยคหลัง (the match) เป็นคนทำกริยา flood ซึ่งผิดความหมายอย่างรุนแรง", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "To accurately assess the structural damage of the building, ___________.",
+    hint: "การป้องกันความคลุมเครือในงานเขียนวิศวกรรม (Dangling Modifier Prevention): วลีขึ้นต้นประโยคระบุว่า 'เพื่อประเมินความเสียหายอย่างแม่นยำ...' ดังนั้น ประธานที่ตามหลังเครื่องหมายจุลภาค (comma) ทันที 'ต้องเป็นบุคคลหรือกลุ่มบุคคลที่มีความสามารถในการประเมินได้จริง' เท่านั้น",
+    options: [
+      { text: "a drone was deployed by the engineering team", rationale: "โดนหลอกเพราะความคุ้นเคย! หากเอา drone ขึ้นประธาน จะกลายเป็นว่าตัวโดรนไร้คนขับลุกขึ้นมานั่งประเมินวิเคราะห์โครงสร้างตึกด้วยตัวมันเอง (Dangling Modifier)", isCorrect: false },
+      { text: "the engineering team deployed a drone", rationale: "ถูกต้องและปลอดภัยในงานเขียนวิชาชีพ! ทีมวิศวกร (the engineering team) คือประธานที่แท้จริงซึ่งสามารถทำกริยา 'assess (ประเมิน)' ที่อยู่ต้นประโยคได้ โครงสร้างสมเหตุสมผลไร้จุดบกพร่อง", isCorrect: true },
+      { text: "deployment of a drone was necessary", rationale: "ผิดหลักการประยุกต์ใช้สื่อสารครับ การเอาคำนามนามธรรมอย่าง 'deployment (การใช้งาน)' มาขึ้นต้น ไม่สามารถเป็นผู้ทำกริยาประเมินค่า (assess) ที่เปิดประโยคไว้ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The newly appointed CEO’s turnaround strategy involves not only restructuring the internal operational hierarchy but also ___________ cross-border strategic partnerships.",
+    hint: "การวางกลยุทธ์ธุรกิจ (Asymmetrical Parallelism): คำเชื่อมคู่ขนาน 'not only ... but also ...' บังคับให้โครงสร้างคำทั้งสองฝั่งต้องมีความสมมาตรทางโครงสร้างไวยากรณ์ (Parallel Structure) ฝั่งซ้ายใช้คำประเภทใด ฝั่งขวาต้องใช้ประเภทนั้น",
+    options: [
+      { text: "forging", rationale: "ยอดเยี่ยมมาก! ฝั่งหน้าตามหลังด้วยคำรูป Gerund (restructuring) ดังนั้นฝั่งหลังหลังคำว่า but also จึงต้องขนานตามกันด้วยคำรูป Gerund เช่นเดียวกันคือ 'forging' เพื่อความลื่นไหลในเชิงธุรกิจ", isCorrect: true },
+      { text: "to forge", rationale: "เสียหลักคู่ขนานครับ แม้ความหมายจะคล้ายกัน แต่โครงสร้างสละสลวยทางไวยากรณ์จะพังทลายลงทันทีเพราะเอา Infinitive ไปขนานกับ Gerund", isCorrect: false },
+      { text: "forge", rationale: "ไม่ถูกต้องครับ ขัดแย้งกับกฎคู่ขนานอย่างรุนแรงเนื่องจากเป็นกริยาฐานที่ไม่มีตัวเชื่อมประเภทเดียวกันมารองรับด้านหน้า", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The critically injured ___________ rushed to the nearest level-1 trauma center via emergency military helicopters.",
+    hint: "รายงานกู้ภัยการแพทย์ (Substantive Adjectives): โครงสร้าง 'The + คำคุณศัพท์ (The critically injured)' ทำหน้าที่เป็นคำนามพหูพจน์เสมอในภาษาอังกฤษ สื่อถึง 'กลุ่มผู้ได้รับบาดเจ็บสาหัสทั้งหมด' วางกริยาให้ถูกพจน์",
+    options: [
+      { text: "were", rationale: "ถูกต้องและแม่นยำ! โครงสร้าง 'The + Adjective' สื่อความหมายถึงกลุ่มคนประเภทนั้นๆ ในภาพรวม (Plural Collective) จึงต้องใช้กริยาพหูพจน์อย่าง 'were' เท่านั้นครับ", isCorrect: true },
+      { text: "was", rationale: "โดนหลอกเพราะมองว่าคำไม่มีการเติม -s! จำไว้ว่ากลุ่มคำคุณศัพท์ที่ทำหน้าที่เป็นคำนามประเภทนี้จะไม่มีวันเติม s แต่ตัวระบบแกรมม่าบังคับให้เป็นพหูพจน์ในตัวอยู่แล้ว", isCorrect: false },
+      { text: "has been", rationale: "ผิดทั้งพจน์ของกริยา (เป็นเอกพจน์) และผิดมิติกาลเวลาที่ไม่สอดรับกับสัจธรรมเหตุการณ์ฉุกเฉินเร่งด่วนในอดีตครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ your exceptional and visionary leadership during the fiscal crisis, our corporation would have gone completely bankrupt.",
+    hint: "บทกล่าวสุนทรพจน์องค์กร (Conditional Prepositional Substitutes): วลีใดในกฎภาษาอังกฤษขั้นสูงที่มีความหมายเชิงเงื่อนไขหักล้างแปลว่า 'หากไม่ใช่เพราะ... / ถ้าไม่มี...' (มีค่าเท่ากับ If it had not been for...) และตามด้วยกลุ่มคำนาม",
+    options: [
+      { text: "But for", rationale: "อัจฉริยะตัวจริง! 'But for' เป็นคำเชื่อมระดับหรูในภาษาเขียน มีความหมายเท่ากับ 'If it had not been for' (ถ้าไม่ได้ระบุรับความช่วยเหลือจาก...) ใช้คู่กับนามขยายสรุปผลเงื่อนไขอดีตได้อย่างงดงาม", isCorrect: true },
+      { text: "Except", rationale: "ความหมายไม่ได้ครับ Except แปลว่า 'ยกเว้นแต่' มักใช้ในการตัดสิ่งหนึ่งออกจากกลุ่มใหญ่ ไม่ใช่การตั้งเงื่อนไขสมมุติของเหตุการณ์ในอดีตครับ", isCorrect: false },
+      { text: "Lest", rationale: "ผิดบริบทและหน้าที่ทางไวยากรณ์ครับ Lest แปลว่า 'ด้วยเกรงว่า/เพื่อป้องกันไม่ให้' และต้องตามด้วยประโยคย่อยที่มีกริยารูปดั้งเดิม ไม่ใช่ตามด้วยกลุ่มคำนามครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "No sooner ___________ the press conference stage than the power grid failed, plunging the auditorium into absolute darkness.",
+    hint: "การรายงานข่าวสด (Correlative Inversion Mechanics): สำนวนคู่คำ 'No sooner ... than ...' มีกฎเหล็กว่า หากนำ No sooner มาขึ้นต้นประโยค ประโยคย่อยแรกต้องทำการ Inversion สลับกริยาช่วย (มักเป็น Past Perfect) ขึ้นหน้าประธาน",
+    options: [
+      { text: "had the Prime Minister stepped onto", rationale: "ถูกต้องและสมบูรณ์แบบ! เรียงโครงสร้าง Inversion แบบ Past Perfect [had + ประธาน + V.3] สอดรับกับคำเชื่อมคู่ 'than' ที่อยู่ตรงกลางประโยคตามสูตรเป๊ะ", isCorrect: true },
+      { text: "the Prime Minister had stepped onto", rationale: "ตกหลุมพรางประโยคบอกเล่า! เมื่อมีคำปฏิเสธเชิงเปรียบเทียบเวลา (No sooner) นำหน้า ห้ามเรียงประโยคแบบประธานขึ้นก่อนกริยาช่วยเด็ดขาดครับ", isCorrect: false },
+      { text: "did the Prime Minister stepped onto", rationale: "เกือบถูกในแง่โครงสร้างสลับ แต่ผิดหลักไวยากรณ์พื้นฐานรุนแรงเพราะหลังกริยาช่วย did ตัวกริยาแท้ต้องกลับเป็น V.1 ดั้งเดิม (step) ไม่ใช่ปล่อยให้เติม -ed (stepped) ซ้อนกันครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "It was his profound, unwavering dedication to public service ___________ earned him the prestigious global humanitarian award.",
+    hint: "วาทศิลป์การเขียนคำนิยม (Cleft Sentence for Emphasis): นี่คือโครงสร้างประโยคแยกส่วนเน้นย้ำ (Cleft Sentence) เพื่อดึงจุดเด่นของประธานขึ้นมาเชิดชู โครงสร้างมาตรฐานระดับสากลคือ [It is/was + สิ่งที่ต้องการเน้น + ___________ + ประโยคที่เหลือ]",
+    options: [
+      { text: "that", rationale: "ถูกต้อง! โครงสร้าง 'It was ... that ...' คือรูปประโยค Cleft Sentence ที่ใช้เน้นย้ำสิ่งใดสิ่งหนึ่งในประโยคให้โดดเด่นสะดุดตาที่สุดในเชิงวาทศิลป์", isCorrect: true },
+      { text: "which it", rationale: "ผิดโครงสร้างอย่างรุนแรงครับ การใส่คำว่า it ซ้ำซ้อนเข้ามาตรงนี้จะทำให้เกิดการซ้ำซ้อนของประธานในประโยคย่อยโดยไม่จำเป็น", isCorrect: false },
+      { text: "what", rationale: "ไม่สามารถนำมาใช้ควบรวมในโครงสร้างเน้นแยกส่วน Cleft Sentence ที่มีประธานระบุไว้ชัดเจนแบบนี้ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Each of the thousands of international laboratory participants who registered for the clinical trial ___________ required to sign a consent form.",
+    hint: "ข้อตกลงการวิจัยทางการแพทย์ (Distributive Pronoun Agreement): ระวังส่วนขยายซ่อนเงื่อน! ประธานที่แท้จริงของประโยคนี้ไม่ใช่ผู้เข้าร่วมทดลองพหูพจน์ (participants) แต่เป็นสรรพนามปันส่วนที่อยู่หน้าสุดคือคำว่า 'Each of... (แต่ละคน)'",
+    options: [
+      { text: "is", rationale: "ยอดเยี่ยมมากไม่โดนหลอก! จำไว้ว่าประธานแกนหลักคือคำว่า 'Each' ซึ่งถือเป็นเอกพจน์เสมอในทางกฎไวยากรณ์ทางการ แม้จะมีนามพหูพจน์ยาวเหยียดมาคั่นกลางก็ตาม จึงต้องใช้กริยา 'is'", isCorrect: true },
+      { text: "are", rationale: "ติดกับดักเพราะเห็นคำว่า participants แน่นอน! คำเหล่านั้นเป็นเพียงส่วนขยายในวลีบุพบทหลัง of เท่านั้น ไม่มีสิทธิ์ควบคุมเอกพจน์/พหูพจน์ของกริยาแท้ตัวท้ายครับ", isCorrect: false },
+      { text: "were", rationale: "นอกจากจะผิดพจน์ของประธานหลักแล้ว ยังไม่เข้ากับบริบทข้อกำหนดความจริงที่เป็นกฎระเบียบปฏิบัติสากลในปัจจุบันด้วยครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ any unforeseen complications arise during the complex surgical procedure, notify the chief resident on duty immediately.",
+    hint: "คู่มือปฏิบัติการในห้องผ่าตัด (Inverted Future Conditional): ประโยคคำสั่งนี้ละคำว่า If ออกไป แต่สังเกตกริยาคำว่า 'arise' เป็นรูปดั้งเดิม (V.inf) ไม่เติม -s ทั้งที่ประธานเป็นเอกพจน์ แสดงว่ามีกริยาช่วยตัวใดแฝงอยู่หน้าประธานเพื่อใช้แทน If",
+    options: [
+      { text: "Should", rationale: "ถูกต้องระดับปรมาจารย์! โครงสร้างนี้ดัดแปลงมาจาก 'If any unforeseen complications should arise...' เมื่อตัดสินใจสละ If จะดึง 'Should' มาวางหน้าประธาน สื่อถึงเหตุการณ์ที่มีโอกาสเกิดน้อยแต่เตรียมพร้อมรับมือไว้", isCorrect: true },
+      { text: "Were", rationale: "ผิดกฎกริยาพ่วงด้านหลังครับ หากใช้ Were โครงสร้างกริยาด้านหลังจะต้องเปลี่ยนรูปเป็นตระกูลอินฟินิตีฟมี to (Were complications to arise...) เท่านั้นครับ", isCorrect: false },
+      { text: "Had", rationale: "ผิดมิติกาลเวลาครับ Had จะใช้กับการสลับเงื่อนไขอดีตล่วงผ่าน (Third Conditional) และกริยาตัวหลังสุดต้องเป็นช่อง 3 (arisen) ไม่ใช่รูปดั้งเดิมแบบนี้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________, the experimental oncological drug did not yield the expected therapeutic results despite showing immense promise in vitro.",
+    hint: "การเขียนบทคัดย่อวารสารแพทย์ (Disjunct Adverbials): ตัวเลือกต้องทำหน้าที่เป็น 'คำวิเศษณ์ประเมินภาพรวมประโยค (Disjunct)' แปลว่า 'น่าเสียดายที่...' ซึ่งต่างจากคำวิเศษณ์ขยายกริยาปกติที่บอกอาการของประธาน",
+    options: [
+      { text: "Regrettably", rationale: "ถูกต้องเฉียบคม! Regrettably ทำหน้าที่เป็น Sentence Adverbial (Disjunct) หมายถึง 'มันเป็นเรื่องที่น่าเสียดายยิ่งนักที่...' ใช้ขึ้นต้นเพื่อประเมินสถานการณ์ข้อเท็จจริงทั้งหมดของประโยค", isCorrect: true },
+      { text: "Regretfully", rationale: "โดนหลอกคำศัพท์คู่แฝด! Regretfully แปลว่า 'อย่างเต็มไปด้วยความรู้สึกเสียใจ' ซึ่งใช้ขยาย 'คน' ที่ทำกริยาด้วยความเสียใจ แต่ในประโยคนี้ตัวยา (drug) มีความรู้สึกเองไม่ได้ จึงใช้ไม่ได้ครับ", isCorrect: false },
+      { text: "Regretted", rationale: "ไม่ถูกโครงสร้างครับ รูปนี้เป็นกริยาช่อง 2 หรือช่อง 3 ไม่สามารถนำมาลอยโดดๆ หน้าประโยคเพื่อทำหน้าที่ประเมินบริบทใจความทั้งหมดได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Throughout his highly celebrated and tumultuous career on Broadway, the legendary method actor lived ___________.",
+    hint: "การวิเคราะห์โครงสร้างวรรณกรรมระดับสูง (Cognate Object Mechanics): โครงสร้างไวยากรณ์โบราณและหรูหราที่เรียกว่า 'กรรมพ้องกริยา (Cognate Object)' คือการนำคำนามที่มีรากศัพท์หรือความหมายเดียวกับคำกริยาอกรรม (Intransitive) มาเป็นกรรมเพื่อการขยายความเชิงกวีอย่างเป็นระบบ",
+    options: [
+      { text: "a life of profound humility", rationale: "คุณคือสุดยอดเซียนไวยากรณ์ภาษาอังกฤษตัวจริง ตอบถูกข้อสุดท้าย! คำว่า 'lived a life' คือโครงสร้างวิจิตรขั้นสูง (Cognate Object) คำนาม life ทำหน้าที่เป็นกรรมตรงของกริยา live เพื่อเปิดทางขยายรูปประโยคได้อย่างสวยงามตามหลักภาษาศาสตร์", isCorrect: true },
+      { text: "profoundly humble", rationale: "ผิดโครงสร้างครับ คำวิเศษณ์ profoundly ไม่สามารถไปขยายคำคุณศัพท์ humble ที่ลอยอยู่เด็ดขาด หากไม่มีโครงสร้าง Linking Verb มารองรับด้านหน้า", isCorrect: false },
+      { text: "in a life profoundly humble", rationale: "โครงสร้างมีความเยิ่นเย้อเกินจำเป็นและใส่คำบุพบท 'in' เข้ามาขัดขวางการทำงานของกรรมตามธรรมชาติของรูปแบบวรรณกรรมประเภทนี้ครับ", isCorrect: false }
+    ]
+  }
+];
+
+// ฟังก์ชันสลับตำแหน่งโจทย์
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let shuffledQuizData = [];
+let currentQ = 0;
+let score = 0;
+let selected = null;
+let isChecked = false;
+
+// เริ่มต้นโหลดคลังข้อสอบด่านบอส
+function initQuiz() {
+  shuffledQuizData = shuffleArray([...quizData].map(q => ({
+    ...q,
+    options: shuffleArray([...q.options])
+  })));
+  currentQ = 0;
+  score = 0;
+  selected = null;
+  isChecked = false;
+}
+
+// วาดกราฟิกและองค์ประกอบเกม
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  const q = shuffledQuizData[currentQ];
+  const pct = (currentQ / shuffledQuizData.length) * 100;
+
+  container.innerHTML = `
+    <div class="header">
+      <h1>Ultra-Hard Applied Grammar Simulator 🌌⚡</h1>
+      <p>คลังจำลองด่านที่ 6: ท้าทายเซียนภาษาและการประยุกต์ใช้ในบริบทจริง สกร.อำเภอโนนสัง</p>
+    </div>
+
+    <div class="card">
+      <div class="progress-container">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span>Simulation Check: ${currentQ + 1}/${shuffledQuizData.length}</span>
+      </div>
+
+      <div class="hint-box">🔬 <b>กล่องวิเคราะห์เชิงลึก (Contextual Hint):</b> ${q.hint}</div>
+      
+      <div class="instruction">👁️‍🗨️ จงวิเคราะห์บริบทและเลือกโครงสร้างที่ถูกต้องที่สุดเพื่อใช้งานจริง:</div>
+      <div class="question-text">${q.sentence}</div>
+
+      <div class="options-list">
+        ${q.options.map((opt, i) => `
+          <div class="option-item ${isChecked ? (opt.isCorrect ? 'correct' : (selected === i ? 'wrong' : '')) : (selected === i ? 'selected' : '')} ${isChecked ? 'disabled' : ''}" 
+               onclick="window.selectOpt(${i})">
+            ${opt.text}
+          </div>
+        `).join('')}
+      </div>
+
+      ${isChecked ? `
+        <div class="rationale-box ${q.options[selected].isCorrect ? 'correct' : 'wrong'}">
+          <b>${q.options[selected].isCorrect ? '💎 การวิเคราะห์สมบูรณ์แบบ:' : '⚠️ ตรวจพบจุดบกพร่องในระบบคิด:'}</b> ${q.options[selected].rationale}
+        </div>
+        <button class="btn btn-primary" onclick="window.nextQ()">${currentQ === shuffledQuizData.length - 1 ? 'ประมวลผลด่านจำลองระดับเซียน' : 'เข้าสู่ระบบวิเคราะห์ข้อถัดไป ➡️'}</button>
+      ` : `
+        <button class="btn btn-primary" ${selected === null ? 'disabled' : ''} onclick="window.checkAns()">ส่งโครงสร้างเข้าตรวจสอบ 🔎</button>
+      `}
+    </div>
+  `;
+}
+
+// ประกาศฟังก์ชันลง window object ทั้งหมดเพื่อความเสถียร
+window.selectOpt = function(i) {
+  if (!isChecked) {
+    selected = i;
+    renderQuiz();
+  }
+};
+
+window.checkAns = function() {
+  isChecked = true;
+  if (shuffledQuizData[currentQ].options[selected].isCorrect) {
+    score++;
+  }
+  renderQuiz();
+};
+
+window.nextQ = function() {
+  if (currentQ < shuffledQuizData.length - 1) {
+    currentQ++;
+    selected = null;
+    isChecked = false;
+    renderQuiz();
+  } else {
+    window.showSummary(); // เข้าสู่หน้าประเมินเมื่อจบข้อสุดท้าย
+  }
+};
+
+window.initQuiz = initQuiz;
+window.renderQuiz = renderQuiz;
+
+// ระบบแสดงผลลัพธ์และประเมินศักยภาพผู้เรียนขั้นสูง
+window.showSummary = function() {
+  const container = document.getElementById('quiz-container');
+  
+  let evalTitle = "";
+  let evalDesc = "";
+  let evalColor = "";
+  
+  // เกณฑ์วัดระดับความสามารถด่านประยุกต์ใช้ยากพิเศษ (เต็ม 20 คะแนน)
+  if (score >= 18) {
+    evalTitle = "ระดับ: อัจฉริยะวิเคราะห์ภาษาระดับสากล (Elite Applied Linguist) 👑🌌";
+    evalDesc = "นี่มันเหนือมนุษย์ไปแล้วครับ! ข้อสอบชุดนี้ออกแบบมาเพื่อดักควายและทดสอบวิสัยทัศน์โครงสร้างภาษาศาสตร์ระดับสูง แต่คุณทำคะแนนได้เกือบเต็มหรือเต็ม! คุณมีความสามารถในการอ่าน สรุปความ และเขียนเอกสารกฎหมาย รายงานการแพทย์ หรืองานวิจัยภาษาอังกฤษระดับนานาชาติได้อย่างประณีตและไร้รอยต่อ หาตัวจับยากมากครับ!";
+    evalColor = "var(--accent)";
+  } else if (score >= 14) {
+    evalTitle = "ระดับ: นักวิเคราะห์โครงสร้างชำนาญการ (Advanced Professional Stylist) 💎";
+    evalDesc = "ยอดเยี่ยมเกินมาตรฐานทั่วไปมากๆ ครับ! คะแนนนี้บ่งชี้ว่าคุณเข้าใจจุดมุ่งหมายของการนำไวยากรณ์ไป 'ประยุกต์ใช้จริง' ในสายอาชีพและงานเขียนระดับหรู สามารถแยกแยะความคลุมเครือของส่วนขยายลอย (Dangling Modifier) และโครงสร้างคู่ขนานที่สลับซับซ้อนได้เป็นอย่างดี พร้อมลุยสนามสอบระดับชาติได้ทันทีครับ";
+    evalColor = "var(--primary)";
+  } else if (score >= 10) {
+    evalTitle = "ระดับ: นักคิดเชิงระบบผู้มีศักยภาพพัฒนา (Capable Strategic Practitioner) ⚡";
+    evalDesc = "ผ่านเกณฑ์ครึ่งหนึ่งของด่านจำลองระดับนรกชิงเปรตนี้ถือว่าคุณไม่ธรรมดาแล้วครับ! โครงสร้างหลายข้อถูกออกแบบมาให้โครงสร้างขัดกับความคุ้นชินของภาษาพูดทั่วไป ซึ่งคุณสามารถเอาตัวรอดมาได้ แนะนำให้อ่านกล่องคำใบ้สีเหลืองและวิเคราะห์เรื่องพจน์ประธานซ่อนเงื่อน (เช่นคำว่า Each) เพิ่มเติม จะทำให้ทักษะคมกริบกว่านี้แน่นอนครับ";
+    evalColor = "var(--warning)";
+  } else {
+    evalTitle = "ระดับ: อยู่ในขั้นตอนเก็บเกี่ยวประสบการณ์ประยุกต์ (Foundation Reinforcement Required) 🛠️";
+    evalDesc = "นับถือในความกล้าหาญที่กดเข้ามาเผชิญหน้ากับเครื่องจำลองด่านนี้ครับ! อย่าเสียกำลังใจไปเด็ดขาด เพราะนี่ไม่ใช่ข้อสอบวัดความจำโรงเรียนทั่วไป แต่เป็นไวยากรณ์เชิงโครงสร้างขั้นสูงสุดที่ทนายความหรือนักวิจัยต่างประเทศใช้กัน แนะนำให้เซฟไฟล์นี้ไว้ลองเล่นใหม่อีกรอบ ค่อยๆ ซึมซับการใช้เหตุผลในส่วนเฉลย แล้วคุณจะเก่งขึ้นอย่างก้าวกระโดดแน่นอนครับ!";
+    evalColor = "var(--danger)";
+  }
+
+  container.innerHTML = `
+    <div class="card" style="text-align:center; border: 2px solid var(--accent);">
+      <h2 style="font-size:28px; margin-bottom: 5px; color: var(--primary-dark)">📊 สิ้นสุดการทดสอบระบบประยุกต์ใช้!</h2>
+      <p style="color: #475569; font-weight: 500;">บันทึกผลสัมฤทธิ์ทางการเรียนรู้เชิงโครงสร้างประยุกต์</p>
+      
+      <div style="font-size:76px; font-weight:800; color:var(--primary); margin: 20px 0; text-shadow: 2px 2px 4px rgba(107,33,168,0.15);">${score}/${shuffledQuizData.length}</div>
+      
+      <!-- กล่องบทวิเคราะห์ผลประเมินรายบุคคลเชิงระบบ -->
+      <div class="evaluation-box" style="border-left-color: ${evalColor}; background: var(--primary-light);">
+        <b style="color: ${evalColor}; font-size: 16px; display: block; margin-bottom: 6px;">🧠 ผลวิเคราะห์การประยุกต์ใช้เชิงตรรกะ (Linguistic Matrix):</b>
+        <span style="font-weight: 700; font-size: 16px; color: #020617;">${evalTitle}</span>
+        <p style="margin-top: 10px; font-size: 14px; color: #334155; font-weight: 400; line-height: 1.6;">${evalDesc}</p>
+      </div>
+
+      <button class="btn btn-primary" onclick="window.initQuiz(); window.renderQuiz();">🔄 รีเซ็ตระบบเพื่อท้าทายใหม่อีกครั้ง (ระบบจะทำการสุ่มสลับโจทย์ใหม่หมด)</button>
+    </div>
+  `;
+};
+
+// รันระบบอัตโนมัติเมื่อเปิดหน้าเว็บ
+window.initQuiz();
+window.renderQuiz();
+</script>
+</body>
+</html>
