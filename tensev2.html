@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tense & Grammar Level Up: เกมตะลุยเซียนแกรมม่า สกร.โนนสัง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* เปลี่ยนธีมเป็นสีม่วง-น้ำเงินเข้ม สื่อถึงระดับ Level Up ที่ท้าทายขึ้น */
+    --primary: #4f46e5; --primary-dark: #3730a3; --primary-light: #e0e7ff;
+    --success: #15803d; --success-light: #f0fdf4;
+    --danger: #b91c1c; --danger-light: #fef2f2;
+    --warning: #b45309; --warning-light: #fffbeb;
+    --gray-bg: #f1f5f9; --text: #0f172a;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: var(--gray-bg); color: var(--text); padding: 20px 10px; line-height: 1.6; }
+  .container { max-width: 600px; margin: 0 auto; }
+  
+  .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  
+  .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
+  /* Progress Bar */
+  .progress-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .progress-bar-bg { flex-grow: 1; background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; }
+  .progress-bar-fill { background: var(--primary); height: 100%; width: 0%; transition: width 0.3s; }
+
+  /* Hint & Question */
+  .hint-box { background: var(--warning-light); border-left: 5px solid var(--warning); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: var(--warning); }
+  .question-text { font-size: 20px; font-weight: 700; margin-bottom: 15px; color: var(--primary-dark); background: var(--primary-light); padding: 15px; border-radius: 10px; text-align: center; border: 1px dashed #a5b4fc; }
+  .instruction { font-size: 14px; color: #475569; margin-bottom: 10px; font-weight: 600; }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: 500; display: flex; align-items: center; }
+  .option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.correct { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+  .option-item.disabled { pointer-events: none; }
+
+  /* Rationale */
+  .rationale-box { margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 14px; animation: fadeIn 0.3s ease; }
+  .rationale-box.correct { background: var(--success-light); border: 1px dashed var(--success); color: var(--success); }
+  .rationale-box.wrong { background: var(--danger-light); border: 1px dashed var(--danger); color: var(--danger); }
+
+  /* Evaluation Box */
+  .evaluation-box { margin: 22px 0; padding: 18px; border-radius: 14px; background: #f8fafc; text-align: left; border-left: 6px solid #cbd5e1; animation: fadeIn 0.4s ease; border-right: 1px solid #e2e8f0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+
+  .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 15px; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="quiz-container">
+    </div>
+</div>
+
+<script>
+// คลังโจทย์ระดับท้าทาย (Level 2) จำนวน 20 ข้อ
+const quizData = [
+  {
+    sentence: "I ___________ the answer to this difficult question now.",
+    hint: "คำว่า know (รู้) เป็นกริยาแสดงสภาพจิตใจ/ความรับรู้ (Stative Verb) กฎเหล็กคือห้ามนำมาเติม -ing แม้จะมีคำว่า now ก็ตามครับ",
+    options: [
+      { text: "know", rationale: "ถูกต้องที่สุด! กริยาแสดงความรู้สึกหรือความรับรู้ เช่น know, love, understand จะใช้รูปธรรมดา (Present Simple) เสมอครับ", isCorrect: true },
+      { text: "am knowing", rationale: "ยังไม่ถูกครับ แกรมม่าภาษาอังกฤษไม่มีการใช้ am knowing สื่อว่ากำลังรู้ครับ", isCorrect: false },
+      { text: "known", rationale: "ยังไม่ใช่ครับ known เป็นช่อง 3 อยู่เดี่ยวๆ ไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Has Somsri finished her English homework ___________?",
+    hint: "นี่คือประโยคคำถามในรูป Present Perfect (Has + V.3) ตัวเลือกไหนแปลว่า 'แล้วหรือยัง' และนิยมใช้วางท้ายประโยคคำถามครับ",
+    options: [
+      { text: "yet", rationale: "เก่งมากครับ! yet มักใช้ท้ายประโยคปฏิเสธและประโยคคำถาม แปลว่า 'แล้วหรือยัง'", isCorrect: true },
+      { text: "already", rationale: "ยังไม่ถูกครับ already แปลว่าเรียบร้อยแล้ว มักใช้วางหน้ากริยาแท้ในประโยคบอกเล่าครับ", isCorrect: false },
+      { text: "since", rationale: "ไม่ใช่จ้า since แปลว่า 'ตั้งแต่' ต้องตามด้วยจุดเริ่มต้นของเวลา เช่น since morning", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The phone rang while I ___________ a shower.",
+    hint: "เหตุการณ์แทรกในอดีต! ขณะที่เหตุการณ์หนึ่ง 'กำลังดำเนินอยู่' (Past Continuous: was/were + V.ing) มีอีกเหตุการณ์เด่นขึ้นมาแทรก (Rang)",
+    options: [
+      { text: "was taking", rationale: "ถูกต้อง! ฉันกำลังอาบน้ำอยู่ (was taking) แล้วโทรศัพท์ก็ดังขึ้นมาแทรกครับ", isCorrect: true },
+      { text: "took", rationale: "ยังไม่ถูกครับ took เป็นช่อง 2 ไม่ได้สื่อความหมายว่า 'กำลังทำอยู่ ณ ตอนนั้น' ครับ", isCorrect: false },
+      { text: "am taking", rationale: "ผิดโครงสร้างครับ rang เป็นอดีต ช้อยส์ตัวช่วยจะใช้ am (ปัจจุบัน) ไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Mr. David has taught English in Non Sang ___________ 2018.",
+    hint: "ประโยคบอกจุดเริ่มต้นของเวลา (ปี ค.ศ. 2018) แปลว่า 'ตั้งแต่เวลานั้นมาจนถึงปัจจุบัน'",
+    options: [
+      { text: "since", rationale: "ถูกต้อง! since แปลว่า ตั้งแต่ ใช้บอกจุดเริ่มต้นของเวลาในโครงสร้าง Present Perfect", isCorrect: true },
+      { text: "for", rationale: "ยังไม่ถูกครับ for จะตามด้วยจำนวนระยะเวลา เช่น เป็นเวลา 5 ปี (for 5 years)", isCorrect: false },
+      { text: "ago", rationale: "ไม่ใช่ครับ ago แปลว่าที่แล้ว ใช้คู่กับ Past Simple ช่อง 2 เท่านั้นครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "We have known each other ___________ ten years.",
+    hint: "ประโยคบอก 'ช่วงระยะเวลาความยาวนาน' (ยาวนานถึง 10 ปีเต็ม) ต้องใช้คำนำหน้าว่าอะไรดีครับ",
+    options: [
+      { text: "for", rationale: "ยอดเยี่ยม! for แปลว่า 'เป็นเวลา' ใช้บอกช่วงระยะเวลาความยาวนานได้ถูกต้อง", isCorrect: true },
+      { text: "since", rationale: "ยังไม่ใช่ครับ ถ้าใช้ since ข้างหลังต้องเป็นปี ค.ศ. หรือจุดเวลาเริ่มต้น ไม่ใช่จำนวนปีครับ", isCorrect: false },
+      { text: "during", rationale: "ยังไม่ถูกครับ during แปลว่า ระหว่าง (เหตุการณ์บางอย่าง) เช่น during the lesson", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "If it ___________ tomorrow, we will stay at home.",
+    hint: "ประโยคเงื่อนไขแบบที่ 1 (First Conditional) โครงสร้างคือ If + Present Simple (ช่อง 1), Will + V.1",
+    options: [
+      { text: "rains", rationale: "ถูกต้องครับ! ประธานคือ it (เอกพจน์) กริยาช่องที่ 1 จึงต้องเติม s (rains) ตามหลักไวยากรณ์", isCorrect: true },
+      { text: "will rain", rationale: "ผิดกฎเหล็กครับ! หลังประโยคที่ติดกับ If ห้ามใส่ will ซ้อนกันเด็ดขาดครับ", isCorrect: false },
+      { text: "rained", rationale: "ยังไม่ถูกครับ rained เป็นช่อง 2 ใช้กับเงื่อนไขสมมุติที่เป็นไปไม่ได้ในปัจจุบัน", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "If I ___________ a lot of money, I would buy a new car.",
+    hint: "ประโยคเงื่อนไขแบบที่ 2 (สมมุติฝันกลางวัน/เป็นไปได้ยาก) โครงสร้างคือ If + Past Simple (ช่อง 2), Would + V.1",
+    options: [
+      { text: "had", rationale: "เก่งมาก! had เป็นกริยาช่อง 2 สื่อถึงการสมมุติเรื่องที่เป็นไปไม่ได้ในปัจจุบันคู่กับคำว่า would ครับ", isCorrect: true },
+      { text: "have", rationale: "ยังไม่ถูกครับ ถ้าใช้ have ประโยคข้างหลังต้องใช้ will ไม่ใช่ would ครับ", isCorrect: false },
+      { text: "will have", rationale: "ไม่ใช่ครับ ห้ามวาง will/would ไว้ในประโยคย่อยหลัง If เด็ดขาด", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The train ___________ before we arrived at the station yesterday.",
+    hint: "เหตุการณ์ในอดีตเกิดขึ้นซ้อนกัน 2 เหตุการณ์! เหตุการณ์ที่เกิด 'ก่อนและจบก่อน' ต้องใช้ Past Perfect (had + ช่อง 3) ครับ",
+    options: [
+      { text: "had left", rationale: "ถูกต้องที่สุด! รถไฟออกไปก่อนแล้ว (had left) พวกเราจึงมาถึงทีหลัง (arrived ช่อง 2)", isCorrect: true },
+      { text: "has left", rationale: "ยังไม่ถูกครับ has left เป็น Present Perfect ใช้กับเหตุการณ์ปัจจุบัน ไม่ใช่เรื่องเมื่อวานนี้", isCorrect: false },
+      { text: "leaves", rationale: "ยังไม่ใช่ครับ leaves เติม s เป็นเรื่องปัจจุบันทั่วไปครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Rice ___________ in Thailand and exported to many countries.",
+    hint: "ประโยคถูกกระทำ (Passive Voice)! ข้าวเป็นสิ่งไม่มีชีวิต มันไม่สามารถ 'ปลูกตัวเอง' ได้ โครงสร้างคือ Verb to be + กริยาช่อง 3",
+    options: [
+      { text: "is grown", rationale: "สุดยอด! ข้าว 'ถูกปลูก' (is grown) ตรงตามโครงสร้างประธานถูกกระทำอย่างสมบูรณ์แบบ", isCorrect: true },
+      { text: "grows", rationale: "ยังไม่ถูกครับ ถ้าตอบ grows จะแปลว่า ข้าวเดินไปปลูกสิ่งอื่น ซึ่งผิดความหมายครับ", isCorrect: false },
+      { text: "is growing", rationale: "ยังไม่ใช่ครับ อันนี้แปลว่าข้าว กำลังเจริญเติบโต แต่โจทย์ข้อนี้เน้นกระบวนการที่ถูกมนุษย์ปลูกและส่งออกครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "This beautiful school ___________ by the villagers in 1998.",
+    hint: "ประโยคถูกกระทำในอดีต (มีปี ค.ศ. 1998 ระบุชัดเจน) โครงสร้างคือ was/were + กริยาช่อง 3",
+    options: [
+      { text: "was built", rationale: "ถูกต้อง! โรงเรียนถูกสร้างขึ้นในอดีต ใช้ was built (was + ช่อง 3) เหมาะสมที่สุดครับ", isCorrect: true },
+      { text: "built", rationale: "ยังไม่ถูกครับ ถ้าใช้ built ตัวเดียว จะแปลว่า โรงเรียนหยิบอิฐขึ้นมาสร้างตัวเองครับ", isCorrect: false },
+      { text: "is built", rationale: "เกือบถูกเรื่องโครงสร้าง แต่ข้อนี้มีปีอดีตระบุชัดเจน จึงต้องเปลี่ยนจาก is เป็น was ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Look! The floor is wet. It ___________ rained.",
+    hint: "ฝน 'เพิ่งจะ' ตกเสร็จไปใหม่ๆ (มีหลักฐานคือพื้นเปียก) เหตุการณ์เพิ่งจบใช้ Present Perfect โครงสร้างคือ Have/Has + just + V.3",
+    options: [
+      { text: "has just", rationale: "แม่นยำมาก! It ใช้คู่กับ has และวาง just ไว้หน้ากริยาช่อง 3 (rained) สื่อว่าเพิ่งเกิดขึ้นสดๆ ร้อนๆ", isCorrect: true },
+      { text: "just has", rationale: "สลับตำแหน่งกันนิดนึงครับ ตัวบอกเวลาอย่าง just ต้องอยู่หลังกริยาช่วย has ครับ", isCorrect: false },
+      { text: "did", rationale: "ยังไม่ถูกครับ did เป็นอดีตธรรมดา ไม่นิยมใช้คู่กับกริยาช่อง 3 เติม -ed ในลักษณะนี้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Somsak is a very punctual student. He ___________ late for class.",
+    hint: "ทดสอบการวางตำแหน่ง! คำบอกความถี่ (Adverb of Frequency เช่น never) กฎคือต้องวางไว้ 'ตามหลัง' Verb to be (is, am, are) เสมอครับ",
+    options: [
+      { text: "is never", rationale: "เก่งมาก! จำไว้เสมอว่าคำบอกความถี่ต้องอยู่หลัง Verb to be (is never จึงถูกต้อง)", isCorrect: true },
+      { text: "never is", rationale: "สลับที่กันครับ แกรมม่าระบุว่าไม่สามารถเอา never มาตัดหน้า Verb to be ได้ในประโยคปกติครับ", isCorrect: false },
+      { text: "is always", rationale: "แปลความหมายผิดครับ โจทย์บอก Somsak เป็นคนตรงต่อเวลา (punctual) ดังนั้นเขาต้อง 'ไม่เคย' มาสาย (never)", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "A: Why are you buying paint?  B: I ___________ my room this weekend.",
+    hint: "วางแผนไว้ล่วงหน้า 100%! มีการเตรียมตัวซื้อสีมาแล้ว การกระทำในอนาคตที่คิดและเตรียมการไว้แล้ว ต้องใช้โครงสร้าง be going to ครับ",
+    options: [
+      { text: "am going to paint", rationale: "ถูกต้องครับ! ถ้าเตรียมอุปกรณ์หรือตั้งใจไว้ก่อนแล้ว ใช้ be going to จะตรงจุดกว่าการใช้ will ครับ", isCorrect: true },
+      { text: "will paint", rationale: "ยังไม่เป๊ะครับ will มักใช้กับอนาคตที่คิดขึ้นมาทันทีปุ๊บปั๊บ ไม่ได้เตรียมการล่วงหน้าครับ", isCorrect: false },
+      { text: "painted", rationale: "ไม่ใช่ครับ painted เติม -ed เป็นอดีต แต่ในโจทย์บอกเป็นช่วงวันหยุดนี้ (ยังมาไม่ถึง)", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I ___________ to Chiang Mai three times in my life.",
+    hint: "เล่าประสบการณ์ชีวิต! 'เคยไปเชียงใหม่มาแล้ว 3 ครั้งในชีวิต' (ไม่เน้นเวลาเจาะจง แต่เน้นว่าเคยทำ) ต้องใช้ Present Perfect (have/has + V.3)",
+    options: [
+      { text: "have been", rationale: "ยอดเยี่ยม! have been to แปลว่า เคยไป...และกลับมาแล้ว ใช้บอกประสบการณ์ชีวิตได้ดีที่สุด", isCorrect: true },
+      { text: "went", rationale: "ยังไม่ถูกครับ went เป็นช่อง 2 จะใช้ก็ต่อเมื่อระบุเวลาอดีตชัดเจน เช่น went yesterday ครับ", isCorrect: false },
+      { text: "am going", rationale: "ยังไม่ใช่จ้า am going แปลว่ากำลังจะไป ณ ตอนนี้", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I ___________ to Chiang Mai last year.",
+    hint: "เปรียบเทียบจากข้อที่แล้ว! ข้อนี้มีคำบอกเวลาอดีตชัดเจนเจาะจงเป๊ะๆ คือคำว่า last year (ปีที่แล้ว) ต้องเปลี่ยนไปใช้กริยาช่องไหนนะ",
+    options: [
+      { text: "went", rationale: "ถูกต้อง! เมื่อมีเวลาระบุชัดเจนในอดีต (last year) ต้องใช้ Past Simple กริยาช่อง 2 (went) เท่านั้นครับ", isCorrect: true },
+      { text: "have been", rationale: "ผิดกติกาครับ! โครงสร้าง Have + V.3 ห้ามนำมาใช้คู่กับคำบอกเวลาที่เจาะจงอดีตอย่าง last year เด็ดขาด", isCorrect: false },
+      { text: "go", rationale: "ไม่ใช่ครับ go เป็นช่อง 1 ใช้กับปัจจุบัน", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "We ___________ a big party tonight. Everything is ready!",
+    hint: "อนาคตอันใกล้ที่นัดแนะเตรียมงานเสร็จหมดแล้ว (Everything is ready) เราสามารถใช้รูป Present Continuous (กำลังทำ) แทนการบอกอนาคตได้",
+    options: [
+      { text: "are having", rationale: "เก่งมาก! รูป Present Con สามารถนำมาใช้พูดถึงอนาคตที่สรุปเตรียมการไว้แน่นอนแล้วได้ครับ", isCorrect: true },
+      { text: "have", rationale: "ยังไม่เด่นชัดครับ have ธรรมดาหมายถึงจัดงานเป็นประจำทุกคืน ซึ่งไม่เข้ากับคำว่า tonight (คืนนี้)", isCorrect: false },
+      { text: "had", rationale: "ไม่ถูกต้องครับ had เป็นอดีตช่อง 2 แต่คืนนี้เหตุการณ์ยังมาไม่ถึงครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Don't worry about the dishes. I have ___________ washed them.",
+    hint: "คำช่วยขยายแปลว่า ทำเสร็จ 'เรียบร้อยแล้ว' วางอยู่ตรงกลางระหว่างกริยาช่วย have กับกริยาช่อง 3 (washed)",
+    options: [
+      { text: "already", rationale: "ถูกต้องที่สุด! already แปลว่า เรียบร้อยแล้ว ใส่ตรงกลางเพื่อเน้นย้ำความช่วยเหลืออย่างสมบูรณ์", isCorrect: true },
+      { text: "yet", rationale: "ยังไม่ถูกครับ yet ต้องไปอยู่ท้ายประโยคคำถามหรือปฏิเสธเท่านั้นครับ", isCorrect: false },
+      { text: "ever", rationale: "ไม่เข้าแก๊ปครับ ever แปลว่า 'เคย' มักใช้ถามประสบการณ์ เช่น Have you ever...?", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "While my mother was cooking, my father ___________ the garden.",
+    hint: "เหตุการณ์คู่ขนานในอดีต! แม่ก็กำลังทำอาหาร พ่อก็ 'กำลัง' รดน้ำต้นไม้ไปพร้อมๆ กัน พฤติกรรมกำลังทำทั้งคู่ในอดีตใช้ Past Con ทั้งคู่ครับ",
+    options: [
+      { text: "was watering", rationale: "ใช่เลย! เหตุการณ์สองอย่างกำลังทำควบคู่กันไปในอดีต เชื่อมด้วย while ให้ใช้ Past Con (was watering) ทั้งสองฝั่งครับ", isCorrect: true },
+      { text: "watered", rationale: "ยังไม่ถูกครับ watered ช่อง 2 จะกลายเป็นเหตุการณ์สั้นๆ ที่เข้ามาขัดจังหวะแม่ทำอาหาร ซึ่งไม่สอดคล้องกับพฤติกรรมในสวน", isCorrect: false },
+      { text: "is watering", rationale: "ผิดรูปกาลเวลาครับ ประโยคแรกใช้ was (อดีต) ประโยคหลังจะเปลี่ยนเป็น is (ปัจจุบัน) ไม่ได้", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Usually, she drinks tea, but today she ___________ coffee.",
+    hint: "ข้อยกเว้นชั่วคราว! ปกติดื่มชา (ความจริงทั่วไป) 'แต่วันนี้' (พฤติกรรมแปลกใหม่ที่กำลังทำแค่ช่วงนี้) ต้องใช้รูปกำลังทำ Present Con นะครับ",
+    options: [
+      { text: "is drinking", rationale: "ถูกต้องครับ! คำว่า but today สื่อความหมายถึงเหตุการณ์ชั่วคราวที่ฉีกกฎเกณฑ์เดิม จึงเลือกใช้ Present Continuous", isCorrect: true },
+      { text: "drinks", rationale: "ยังไม่ถูกครับ ถ้าใช้ drinks จะแปลว่าเธอเปลี่ยนใจมาดื่มกาแฟเป็นประจำทุกวันนับจากนี้ ซึ่งโจทย์เน้นแค่เฉพาะวันนี้", isCorrect: false },
+      { text: "drank", rationale: "ไม่ใช่ครับ drank เป็นอดีต แต่เหตุการณ์นี้ระบุว่าเป็นวันนี้ (today)", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "After we ___________ our dinner, we went out for a walk.",
+    hint: "ข้อสุดท้ายท้าเซียน! ทานข้าวเย็นเสร็จก่อน (เกิดก่อนในอดีตใช้ Past Perfect: had + V.3) แล้วจึงชวนกันออกไปเดินเล่นทีหลัง (went ช่อง 2)",
+    options: [
+      { text: "had finished", rationale: "ยอดเยี่ยมที่สุด ตอบถูกข้อสุดท้ายพอดี! เหตุการณ์กินข้าวเกิดและจบลงก่อน จึงใช้ had finished ถูกต้องตามกฎ", isCorrect: true },
+      { text: "finished", rationale: "ยังไม่สมบูรณ์ครับตามกฎไวยากรณ์ขั้นสูง หลังคำว่า After เหตุการณ์แรกที่ทำเสร็จสิ้นสมบูรณ์ควรใช้ Past Perfect ครับ", isCorrect: false },
+      { text: "have finished", rationale: "ผิดรูปกาลเวลาอย่างแรงครับ have เป็นปัจจุบัน แต่ประโยคหลักตามท้ายด้วย went ซึ่งเป็นอดีตไปแล้ว", isCorrect: false }
+    ]
+  }
+];
+
+// ฟังก์ชันสลับข้อสอบ
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let shuffledQuizData = [];
+let currentQ = 0;
+let score = 0;
+let selected = null;
+let isChecked = false;
+
+// เริ่มต้นระบบสุ่ม
+function initQuiz() {
+  shuffledQuizData = shuffleArray([...quizData].map(q => ({
+    ...q,
+    options: shuffleArray([...q.options])
+  })));
+  currentQ = 0;
+  score = 0;
+  selected = null;
+  isChecked = false;
+}
+
+// วาดหน้าจอเกม
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  const q = shuffledQuizData[currentQ];
+  const pct = (currentQ / shuffledQuizData.length) * 100;
+
+  container.innerHTML = `
+    <div class="header">
+      <h1>Tense & Grammar Challenge 🎯</h1>
+      <p>เลเวล 2: ยกระดับความยากสำหรับนักศึกษา สกร.โนนสัง</p>
+    </div>
+
+    <div class="card">
+      <div class="progress-container">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span>${currentQ + 1}/${shuffledQuizData.length}</span>
+      </div>
+
+      <div class="hint-box">💡 <b>วิเคราะห์หลักไวยากรณ์:</b> ${q.hint}</div>
+      
+      <div class="instruction">⚡ เลือกคำตอบที่ถูกต้องที่สุดตามหลักโครงสร้าง (Tense):</div>
+      <div class="question-text">${q.sentence}</div>
+
+      <div class="options-list">
+        ${q.options.map((opt, i) => `
+          <div class="option-item ${isChecked ? (opt.isCorrect ? 'correct' : (selected === i ? 'wrong' : '')) : (selected === i ? 'selected' : '')} ${isChecked ? 'disabled' : ''}" 
+               onclick="window.selectOpt(${i})">
+            ${opt.text}
+          </div>
+        `).join('')}
+      </div>
+
+      ${isChecked ? `
+        <div class="rationale-box ${q.options[selected].isCorrect ? 'correct' : 'wrong'}">
+          <b>${q.options[selected].isCorrect ? '✨ สุดอดมาก!' : '❌ จุดที่ต้องสังเกต:'}</b> ${q.options[selected].rationale}
+        </div>
+        <button class="btn btn-primary" onclick="window.nextQ()">${currentQ === shuffledQuizData.length - 1 ? 'ดูผลการประเมินรายบุคคล' : 'ข้อถัดไป ➡️'}</button>
+      ` : `
+        <button class="btn btn-primary" ${selected === null ? 'disabled' : ''} onclick="window.checkAns()">ส่งคำตอบเพื่อตรวจคำนวณ 🔎</button>
+      `}
+    </div>
+  `;
+}
+
+// ผูกฟังก์ชันไว้ที่ Global Object (window) ป้องกันบั๊กขอบเขตฟังก์ชันในทุกเบราว์เซอร์
+window.selectOpt = function(i) {
+  if (!isChecked) {
+    selected = i;
+    renderQuiz();
+  }
+};
+
+window.checkAns = function() {
+  isChecked = true;
+  if (shuffledQuizData[currentQ].options[selected].isCorrect) {
+    score++;
+  }
+  renderQuiz();
+};
+
+window.nextQ = function() {
+  if (currentQ < shuffledQuizData.length - 1) {
+    currentQ++;
+    selected = null;
+    isChecked = false;
+    renderQuiz();
+  } else {
+    window.showSummary(); // เรียกทำงานหน้าสรุป
+  }
+};
+
+window.initQuiz = initQuiz;
+window.renderQuiz = renderQuiz;
+
+// ฟังก์ชันแสดงกล่องประเมินผลผู้เรียนที่ได้รับการแก้ไขเชิงโครงสร้าง (แสดงผลแน่นอน)
+window.showSummary = function() {
+  const container = document.getElementById('quiz-container');
+  
+  let evalTitle = "";
+  let evalDesc = "";
+  let evalColor = "";
+  
+  // เกณฑ์วัดผลประเมินศักยภาพผู้เรียนรายบุคคล (อ้างอิงจากความยากเลเวล 2 เต็ม 20 คะแนน)
+  if (score >= 18) {
+    evalTitle = "ระดับ: เซียนแกรมม่าขั้นเทพ (Master of Tenses) 👑🔮";
+    evalDesc = "ยอดเยี่ยมระดับอัจฉริยะ! คุณมีความเข้าใจในโครงสร้างไวยากรณ์ขั้นประยุกต์อย่างลึกซึ้ง แยกแยะจุดหลอกของข้อสอบ เช่น Stative Verbs และประโยคเงื่อนไขซับซ้อนได้อย่างชัดเจน ไร้ข้อบกพร่อง พร้อมทำคะแนนทดสอบระดับชาติ (N-NET) ได้คะแนนเต็มแน่นอนครับ";
+    evalColor = "var(--success)";
+  } else if (score >= 14) {
+    evalTitle = "ระดับ: โครงสร้างแม่นยำ (Advanced Learner) 🌟⭐";
+    evalDesc = "เก่งมากครับ! คุณมีพื้นฐานแกรมม่าที่แข็งแรงมาก สามารถจับทางคำบอกเวลา (Time expressions) ในอดีตและอนาคตได้ดี มีจุดผิดพลาดเล็กน้อยในส่วนของ Passive Voice (ประโยคถูกกระทำ) ซึ่งเป็นเรื่องปกติของขั้นประยุกต์ ทบทวนอีกนิดจะสมบูรณ์แบบครับ";
+    evalColor = "var(--primary)";
+  } else if (score >= 10) {
+    evalTitle = "ระดับ: ผ่านเกณฑ์พัฒนาต่อได้ (Intermediate) 👍";
+    evalDesc = "ยินดีด้วยครับ คุณผ่านเกณฑ์ทดสอบในเลเวลที่ยากขึ้นได้สำเร็จ! คุณเริ่มแยกแยะความแตกต่างระหว่างจุดเวลา (since) และช่วงเวลา (for) ได้แล้ว แนะนำให้หมั่นทบทวนเรื่องเหตุการณ์ซ้อน (Past Con vs Past Simple) บ่อยๆ จะช่วยยกระดับความมั่นใจได้ดีขึ้นครับ";
+    evalColor = "var(--warning)";
+  } else {
+    evalTitle = "ระดับ: กำลังพัฒนา/ควรฝึกฝนเพิ่มเติม (Basic Practice) 📚";
+    evalDesc = "พยายามได้ดีมากครับ ไม่ต้องกังวลใจไปนะครับ เนื่องจากข้อสอบชุดนี้มีการเพิ่มระดับความยากขึ้นมา มีหลักไวยากรณ์ขั้นสูงผสมอยู่ แนะนำให้ลองกด 'เล่นใหม่อีกครั้ง' และค่อยๆ อ่านรายละเอียดในกล่องคำใบ้สีเหลือง จะช่วยให้เข้าใจกลไกภาษาอังกฤษได้ง่ายขึ้นครับ สู้ๆ ครับ!";
+    evalColor = "var(--danger)";
+  }
+
+  container.innerHTML = `
+    <div class="card" style="text-align:center">
+      <h2 style="font-size:32px; margin-bottom: 5px;">🎉 จบภารกิจท้าทาย!</h2>
+      <p style="color: #475569; font-weight: 500;">สรุปผลคะแนนแบบทดสอบ Tense & Grammar (Level 2)</p>
+      
+      <div style="font-size:68px; font-weight:800; color:var(--primary); margin: 15px 0;">${score}/${shuffledQuizData.length}</div>
+      
+      <div class="evaluation-box" style="border-left-color: ${evalColor};">
+        <b style="color: ${evalColor}; font-size: 17px; display: block; margin-bottom: 6px;">📊 ผลการประเมินผู้เรียนรายบุคคล:</b>
+        <span style="font-weight: 700; font-size: 16px; color: #0f172a;">${evalTitle}</span>
+        <p style="margin-top: 8px; font-size: 14px; color: #334155; font-weight: 400; line-height: 1.6;">${evalDesc}</p>
+      </div>
+
+      <button class="btn btn-primary" onclick="window.initQuiz(); window.renderQuiz();">🔄 ลองเล่นใหม่อีกรอบ (สุ่มโจทย์ใหม่หมด)</button>
+    </div>
+  `;
+};
+
+// สั่งทำงานครั้งแรกเมื่อเปิดหน้าเว็บ
+window.initQuiz();
+window.renderQuiz();
+</script>
+</body>
+</html>
