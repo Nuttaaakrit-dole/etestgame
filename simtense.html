@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tense Master: เกมตะลุยโครงสร้างกาลเวลา สกร.โนนสัง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0284c7; --primary-dark: #0369a1; --primary-light: #f0f9ff;
+    --success: #166534; --success-light: #f0fdf4;
+    --danger: #991b1b; --danger-light: #fef2f2;
+    --warning: #d97706; --warning-light: #fffbe6;
+    --gray-bg: #f8fafc; --text: #1e293b;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: var(--gray-bg); color: var(--text); padding: 20px 10px; line-height: 1.6; }
+  .container { max-width: 600px; margin: 0 auto; }
+  
+  .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  
+  .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
+  /* Progress Bar */
+  .progress-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .progress-bar-bg { flex-grow: 1; background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; }
+  .progress-bar-fill { background: var(--primary); height: 100%; width: 0%; transition: width 0.3s; }
+
+  /* Hint & Question */
+  .hint-box { background: var(--warning-light); border-left: 5px solid var(--warning); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: #92400e; }
+  .question-text { font-size: 20px; font-weight: 700; margin-bottom: 15px; color: var(--primary-dark); background: var(--primary-light); padding: 15px; border-radius: 10px; text-align: center; border: 1px dashed #bae6fd; }
+  .instruction { font-size: 14px; color: #64748b; margin-bottom: 10px; font-weight: 600; }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: 500; display: flex; align-items: center; }
+  .option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.correct { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+  .option-item.disabled { pointer-events: none; }
+
+  /* Rationale */
+  .rationale-box { margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 14px; animation: fadeIn 0.3s ease; }
+  .rationale-box.correct { background: var(--success-light); border: 1px dashed var(--success); color: var(--success); }
+  .rationale-box.wrong { background: var(--danger-light); border: 1px dashed var(--danger); color: var(--danger); }
+
+  /* Evaluation Box */
+  .evaluation-box { margin: 22px 0; padding: 18px; border-radius: 14px; background: #f1f5f9; text-align: left; border-left: 6px solid #cbd5e1; animation: fadeIn 0.4s ease; }
+
+  .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 15px; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="quiz-container">
+    <!-- เนื้อหาเกมจะถูกใส่ผ่าน JavaScript -->
+  </div>
+</div>
+
+<script>
+// คลังโจทย์เรื่อง Tense จำนวน 20 ข้อสำหรับนักศึกษา สกร.[span_1](start_span)[span_1](end_span)
+const quizData = [
+  {
+    sentence: "Every day, Somsri ___________ up at 6 AM.",
+    hint: "มีคำว่า Every day (ทุกวัน) แสดงว่าเป็นเหตุการณ์ประจำวัน และ Somsri เป็นเอกพจน์ (คนเดียว) กริยาต้องเติม s/es ครับ",
+    options: [
+      { text: "wakes", rationale: "ถูกต้องครับ! ประธานคนเดียว (Somsri) ทำสิ่งนั้นเป็นประจำ กริยาต้องเติม s (wakes)", isCorrect: true },
+      { text: "wake", rationale: "ยังไม่ถูกครับ wake เปล่าๆ ใช้กับประธานพหูพจน์ เช่น I, You, We, They ครับ", isCorrect: false },
+      { text: "woke", rationale: "ยังไม่ใช่จ้า woke เป็นช่อง 2 ใช้กับเหตุการณ์ที่จบไปแล้วในอดีต (Past Simple)", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Look! The birds ___________ in the sky right now.",
+    hint: "มีคำว่า Look! (ดูนั่นสิ!) และ right now (ตอนนี้) แสดงว่าเหตุการณ์กำลังเกิดขึ้นอยู่ ณ ตอนนี้เลยครับ",
+    options: [
+      { text: "are flying", rationale: "เก่งมาก! นกหลายตัว (The birds) กำลังบินอยู่ตอนนี้ ต้องใช้โครงสร้าง are + V.ing ครับ", isCorrect: true },
+      { text: "is flying", rationale: "เกือบถูกครับ แต่ is flying ใช้กับประธานคนเดียว ตัวเดียวครับ แต่นกในโจทย์เติม s (หลายตัว) นะ", isCorrect: false },
+      { text: "flew", rationale: "ยังไม่ถูกครับ flew เป็นกริยาช่อง 2 ใช้เล่าเรื่องในอดีต ไม่ใช่เหตุการณ์ที่กำลังทำอยู่ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Yesterday, I ___________ a big elephant in the village.",
+    hint: "เจอคำว่า Yesterday (เมื่อวานนี้) ปุ๊บ รู้เลยว่าเป็นอดีต (Past Simple) ต้องใช้กริยาช่องที่ 2 เท่านั้นครับ",
+    options: [
+      { text: "saw", rationale: "ถูกต้องที่สุด! saw เป็นกริยาช่อง 2 ของ see ใช้เล่าเรื่องอดีตเมื่อวานนี้ได้ถูกต้อง", isCorrect: true },
+      { text: "see", rationale: "ยังไม่ใช่ครับ see เป็นช่อง 1 ใช้กับปัจจุบันหรือความจริงทั่วไปครับ", isCorrect: false },
+      { text: "seen", rationale: "ยังไม่ถูกจ้า seen เป็นช่อง 3 ต้องใช้คู่กับพวก Have/Has ไม่สามารถใช้เดี่ยวๆ แบบนี้ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Tomorrow, my family ___________ Bangkok.",
+    hint: "มีคำว่า Tomorrow (พรุ่งนี้) เป็นการบอกอนาคต (Future Simple) โครงสร้างคือ will + กริยาช่อง 1 ไม่เติมอะไรเลย",
+    options: [
+      { text: "will visit", rationale: "ยอดเยี่ยม! will แปลว่า จะ ใช้บอกสิ่งที่ตั้งใจจะทำในอนาคต (พรุ่งนี้)", isCorrect: true },
+      { text: "visited", rationale: "ไม่ถูกครับ visited เติม -ed เป็นอดีต ใช้บอกเรื่องที่ทำไปแล้วครับ", isCorrect: false },
+      { text: "visits", rationale: "ยังไม่ใช่ครับ visits เติม s เป็นเรื่องปัจจุบันที่ทำเป็นประจำ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "We ___________ in Non Sang for ten years.",
+    hint: "อาศัยอยู่ที่โนนสังมาเป็นเวลา 10 ปีแล้ว (ทำจากอดีตต่อเนื่องมาจนถึงปัจจุบัน) ใช้ Present Perfect (Have/Has + V.3)",
+    options: [
+      { text: "have lived", rationale: "ถูกต้องครับ! ประธาน We ใช้คู่กับ have + กริยาช่อง 3 (lived) บอกเรื่องที่ทำต่อเนื่องยาวนาน", isCorrect: true },
+      { text: "has lived", rationale: "เกือบถูกแล้วครับ แต่ has ใช้กับประธานเอกพจน์ (He, She, It) ส่วน We ต้องใช้ have ครับ", isCorrect: false },
+      { text: "living", rationale: "ไม่ถูกครับ อยู่ดีๆ จะใช้ V.ing เดี่ยวๆ โดยไม่มีตัวช่วยข้างหน้าไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Listen! Someone ___________ a beautiful song.",
+    hint: "Listen! (ฟังซิ!) มีใครบางคน 'กำลัง' ร้องเพลงอยู่แน่ๆ เลย โครงสร้างคือ is/am/are + V.ing",
+    options: [
+      { text: "is singing", rationale: "ใช่เลย! Someone ถือเป็นประธานเอกพจน์ จึงใช้คู่กับ is singing เพื่อบอกว่ากำลังร้องเพลงอยู่", isCorrect: true },
+      { text: "sing", rationale: "ยังไม่ถูกครับ ถ้าใช้ sing ธรรมดาจะหมายถึงเขาร้องเป็นประจำทุกวัน ไม่ใช่ร้องอยู่ ณ ตอนที่บอกให้ฟัง", isCorrect: false },
+      { text: "sang", rationale: "ยังไม่ใช่จ้า sang เป็นช่อง 2 แปลว่าร้องไปแล้วในอดีต", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The sun ___________ in the east every morning.",
+    hint: "พระอาทิตย์ขึ้นทางทิศตะวันออกในทุกๆ เช้า เป็นความจริงตามธรรมชาติ (Present Simple) ประธานมีอันเดียวเติม s นะ",
+    options: [
+      { text: "rises", rationale: "ถูกต้อง! ความจริงตามธรรมชาติใช้กริยาช่อง 1 และพระอาทิตย์ดวงเดียว กริยาเลยเติม s (rises)", isCorrect: true },
+      { text: "rose", rationale: "ยังไม่ถูกครับ rose เป็นอดีตช่อง 2 แต่เรื่องนี้เป็นความจริงตลอดกาล ต้องใช้ปัจจุบันช่อง 1 ครับ", isCorrect: false },
+      { text: "is rising", rationale: "ยังไม่ใช่จ้า is rising แปลว่ากำลังขึ้นตอนนี้ แต่โจทย์เน้นว่าเกิดขึ้นใน 'ทุกเช้า' (ประจำ)", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Two years ago, they ___________ a new house.",
+    hint: "มีคำว่า ago (ที่แล้ว) เช่น Two years ago (2 ปีที่แล้ว) แสดงว่าเป็นเรื่องราวในอดีต ต้องใช้กริยาช่อง 2 นะครับ",
+    options: [
+      { text: "built", rationale: "เก่งมาก! built เป็นช่อง 2 ของคำว่า build (สร้าง) ใช้กับอดีตที่จบไปแล้วได้ถูกต้อง", isCorrect: true },
+      { text: "build", rationale: "ยังไม่ถูกครับ build เป็นช่อง 1 ใช้กับปัจจุบันครับ", isCorrect: false },
+      { text: "will build", rationale: "ยังไม่ใช่ครับ will build เอาไว้ใช้กับอนาคต แปลว่า จะสร้าง ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Next week, I ___________ my English exam.",
+    hint: "Next week (สัปดาห์หน้า) เป็นเรื่องของอนาคตที่ยังมาไม่ถึง โครงสร้างง่ายๆ คือ will + กริยาช่อง 1",
+    options: [
+      { text: "will take", rationale: "ถูกต้อง! สัปดาห์หน้าเป็นอนาคต ใช้ will take (จะเข้าสอบ) เหมาะสมที่สุดครับ", isCorrect: true },
+      { text: "took", rationale: "ยังไม่ถูกครับ took เป็นช่อง 2 ใช้เล่าเรื่องที่สอบผ่านไปแล้วในอดีตครับ", isCorrect: false },
+      { text: "takes", rationale: "ยังไม่ใช่ครับ takes เติม s ใช้กับเหตุการณ์ปัจจุบันทั่วไป", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "He ___________ not like to drink coffee.",
+    hint: "ประโยคปฏิเสธในปัจจุบัน (Present Simple) ประธานเป็น He (คนเดียว) ต้องใช้กริยาช่วยตัวไหนมาตัดหน้า like ดีนะ?",
+    options: [
+      { text: "does", rationale: "ถูกต้องครับ! He, She, It ในประโยคปฏิเสธเราจะใช้ does not (doesn't) เข้ามาช่วยครับ", isCorrect: true },
+      { text: "do", rationale: "ยังไม่ถูกจ้า do not (don't) จะใช้กับประธานกลุ่ม I, You, We, They ครับ", isCorrect: false },
+      { text: "did", rationale: "ยังไม่ถูกครับ did จะใช้กับอดีต (Past) แต่ประโยคนี้เป็นความชอบในปัจจุบันครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "What ___________ you doing at this moment?",
+    hint: "เจอคำว่า V.ing (doing) และคำว่า at this moment (ในเวลานี้) แสดงว่ากำลังทำอยู่ ประธานเป็น you ใช้คู่กับอะไรนะ?",
+    options: [
+      { text: "are", rationale: "เก่งมาก! โครงสร้าง Present Continuous ของประธาน you คือ 'you are' เสมอครับ", isCorrect: true },
+      { text: "is", rationale: "ไม่ถูกครับ is ใช้กับประธานคนเดียว เช่น He, She, It ครับ", isCorrect: false },
+      { text: "do", rationale: "ยังไม่ถูกครับ ถ้าใช้ do ในประโยค กริยาด้านหลังต้องไม่เติม -ing ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Last night, they ___________ not go to the market.",
+    hint: "ประโยคปฏิเสธในอดีต มีคำว่า Last night (เมื่อคืนนี้) กริยาช่วยที่เป็นอดีตมีอยู่ตัวเดียวที่ใช้ได้กับทุกประธานครับ",
+    options: [
+      { text: "did", rationale: "ถูกต้องที่สุด! ในอดีต (Past Simple) เวลาทำเป็นประโยคปฏิเสธ เราใช้ did not (didn't) กับทุกประธานเลยครับ", isCorrect: true },
+      { text: "does", rationale: "ยังไม่ถูกจ้า does ใช้กับปัจจุบัน ไม่สามารถใช้กับเรื่องเมื่อคืนนี้ได้ครับ", isCorrect: false },
+      { text: "do", rationale: "ไม่ใช่ครับ do เป็นปัจจุบัน ใช้คู่กับประธานพหูพจน์ แต่โจทย์นี้เป็นเรื่องอดีตนะ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Water ___________ at 100 degrees Celsius.",
+    hint: "น้ำเดือดที่อุณหภูมิ 100 องศา เป็นความจริงทางวิทยาศาสตร์ตลอดกาล (Present Simple) น้ำ (Water) นับไม่ได้ ถือเป็นเอกพจน์นะ",
+    options: [
+      { text: "boils", rationale: "ยอดเยี่ยม! ความจริงทั่วไปที่ประธานนับไม่ได้ (เอกพจน์) กริยาต้องเติม s (boils) ครับ", isCorrect: true },
+      { text: "boil", rationale: "ยังไม่ถูกครับ กริยาไม่เติม s จะใช้กับประธานที่เป็นพหูพจน์หลายคน/หลายสิ่งครับ", isCorrect: false },
+      { text: "boiled", rationale: "ยังไม่ใช่ครับ boiled เติม -ed เป็นอดีต แต่น้ำเดือดที่ 100 องศาเป็นความจริงตลอดเวลาครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "While I ___________, the phone rang.",
+    hint: "เหตุการณ์หนึ่ง 'กำลังทำอยู่' (Past Con: was/were + V.ing) แล้วมีอีกเหตุการณ์หนึ่ง (เสียงโทรศัพท์ดัง) เข้ามาแทรกครับ",
+    options: [
+      { text: "was sleeping", rationale: "ถูกต้องครับ! ประธาน I ใช้คู่กับ was + sleeping บอกว่าฉันกำลังนอนหลับอยู่ แล้วโทรศัพท์ก็ดังขึ้นมาแทรก", isCorrect: true },
+      { text: "were sleeping", rationale: "เกือบถูกครับ แต่ were ใช้กับ We, You, They ส่วนประธาน I ต้องใช้คู่กับ was ครับ", isCorrect: false },
+      { text: "slept", rationale: "ยังไม่ถูกจ้า slept เป็นกริยาช่อง 2 ธรรมดา ไม่ได้สื่อถึงความหมายว่า 'กำลังทำอยู่ ณ ตอนนั้น' ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I think it ___________ rain this evening.",
+    hint: "คำว่า this evening (เย็นนี้) คาดเดาเหตุการณ์ล่วงหน้าที่จะเกิดขึ้นในอนาคต ใช้โครงสร้างของ Future Simple นะครับ",
+    options: [
+      { text: "will", rationale: "ถูกต้อง! ใช้ will เพื่อเดาหรือบอกสิ่งที่จะเกิดขึ้นในอนาคตอันใกล้ (เย็นนี้)", isCorrect: true },
+      { text: "did", rationale: "ไม่ใช่ครับ did เป็นกริยาช่วยอดีต เอาไว้ใช้พูดถึงเรื่องที่เกิดขึ้นไปแล้วครับ", isCorrect: false },
+      { text: "is", rationale: "ยังไม่ถูกครับ ถ้าใช้ is ด้านหลังคำว่า rain จะต้องเติม -ing เป็น is raining ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "She usually ___________ to school by bus.",
+    hint: "มีคำว่า usually (โดยปกติ/เป็นประจำ) บอกความถี่ในปัจจุบัน ประธาน She (คนเดียว) อย่าลืมกฎการเติม s/es ที่ท้ายคำกริยานะครับ",
+    options: [
+      { text: "goes", rationale: "เก่งมาก! She เป็นเอกพจน์ กริยา go ลงท้ายด้วย o จึงต้องเติม es กลายเป็น goes ครับ", isCorrect: true },
+      { text: "go", rationale: "ยังไม่ใช่ครับ go ไม่เติมอะไรเลย ใช้กับประธานหลายคน เช่น They go หรือ I go ครับ", isCorrect: false },
+      { text: "went", rationale: "ยังไม่ถูกครับ went เป็นอดีตช่อง 2 แต่ข้อนี้มี usually บอกว่าทำเป็นประจำในปัจจุบันครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Now, the students ___________ English.",
+    hint: "คำว่า Now (ตอนนี้) บ่งบอกอย่างชัดเจนว่าเหล่านักเรียน 'กำลัง' นั่งเรียนกันอยู่ โครงสร้างคือ is/am/are + V.ing ครับ",
+    options: [
+      { text: "are studying", rationale: "ถูกต้อง! นักเรียนหลายคน (The students เติม s) ใช้คู่กับ are studying สื่อว่ากำลังเรียนอยู่ตอนนี้", isCorrect: true },
+      { text: "is studying", rationale: "เกือบถูกแล้วครับ แต่ช้อยส์นี้ใช้กับนักเรียนคนเดียวครับ โจทย์ของเรามีหลายคนนะ", isCorrect: false },
+      { text: "studied", rationale: "ยังไม่ถูกจ้า studied เติม -ed เป็นการบอกว่าเคยเรียนไปแล้วในอดีต ไม่ใช่ตอนนี้", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "My father ___________ his car last weekend.",
+    hint: "มีคีย์เวิร์ดสำคัญคือ last weekend (สุดสัปดาห์ที่แล้ว) เป็นเวลาในอดีต ต้องเปลี่ยนกริยาคำว่า wash (ล้าง) ให้เป็นช่อง 2 ครับ",
+    options: [
+      { text: "washed", rationale: "ถูกต้อง! wash เป็นกริยาปกติ เมื่อเป็นอดีตแค่นำมาเติม -ed (washed) ก็เรียบร้อยแล้วครับ", isCorrect: true },
+      { text: "washes", rationale: "ยังไม่ใช่ครับ washes เติม es ใช้กับเหตุการณ์ปัจจุบันที่ทำเป็นประจำเฉยๆ ครับ", isCorrect: false },
+      { text: "will wash", rationale: "ไม่ถูกต้องครับ will wash แปลว่า 'จะล้าง' เป็นคำสั่งหรือความตั้งใจในอนาคตครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I ___________ happy to see you today.",
+    hint: "ประธานประโยคคือ I เปล่งเสียงบอกความรู้สึกในปัจจุบัน (Present Simple) คำกริยา Verb to be ที่ใช้คู่กับ I มีอยู่ตัวเดียวในโลกครับ",
+    options: [
+      { text: "am", rationale: "สะกดถูก เลือกถูก! I ต้องคู่กับ am เสมอ (I am) ท่องมาตั้งแต่เด็กไม่ลืมแน่นอนครับ", isCorrect: true },
+      { text: "is", rationale: "ผิดครับ is ใช้กับ He, She, It ไม่ใช้กับ I นะครับ", isCorrect: false },
+      { text: "are", rationale: "ไม่ใช่จ้า are ใช้กับ You, We, They ครับผม", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "In 2027, technology ___________ faster.",
+    hint: "โจทย์พูดถึงปี ค.ศ. 2027 ซึ่งเป็นเวลาในอนาคต (เพราะปัจจุบันคือปี 2026) ดังนั้นต้องเลือกโครงสร้างบอกอนาคต 'will + V.1' ครับ",
+    options: [
+      { text: "will become", rationale: "ยอดเยี่ยมมาก! ตอบถูกข้อสุดท้ายพอดี ปี 2027 เป็นอนาคต ใช้ will become (จะกลายเป็น) ถูกต้องที่สุดครับ", isCorrect: true },
+      { text: "became", rationale: "ยังไม่ถูกครับ became เป็นช่อง 2 ใช้กับอดีตที่ผ่านมาแล้วครับ", isCorrect: false },
+      { text: "becomes", rationale: "ยังไม่ใช่ครับ becomes เติม s เป็นรูปปัจจุบันธรรมดา ไม่ใช่อนาคตครับ", isCorrect: false }
+    ]
+  }
+];
+
+// ฟังก์ชันสลับตำแหน่งใน Array (Fisher-Yates Shuffle)
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let shuffledQuizData = [];
+let currentQ = 0;
+let score = 0;
+let selected = null;
+let isChecked = false;
+
+// ฟังก์ชันเริ่มต้นชุดข้อสอบ (สลับข้อ และ สลับตัวเลือกข้างใน)
+function initQuiz() {
+  shuffledQuizData = shuffleArray([...quizData].map(q => ({
+    ...q,
+    options: shuffleArray([...q.options])
+  })));
+  currentQ = 0;
+  score = 0;
+  selected = null;
+  isChecked = false;
+}
+
+// ฟังก์ชันวาดหน้าจอเกม
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  const q = shuffledQuizData[currentQ];
+  const pct = (currentQ / shuffledQuizData.length) * 100;
+
+  container.innerHTML = `
+    <div class="header">
+      <h1>Tense Master: ภารกิจทลายกาลเวลา ⏱️</h1>
+      <p>สำหรับนักศึกษา สกร.อำเภอนอนสัง ระดับพื้นฐาน</p>
+    </div>
+
+    <div class="card">
+      <div class="progress-container">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span>${currentQ + 1}/${shuffledQuizData.length}</span>
+      </div>
+
+      <div class="hint-box">💡 <b>คำใบ้ช่วยคิด:</b> ${q.hint}</div>
+      
+      <div class="instruction">💥 เติมคำในช่องว่างให้ถูกต้องตามหลัก Tense:</div>
+      <div class="question-text">${q.sentence}</div>
+
+      <div class="options-list">
+        ${q.options.map((opt, i) => `
+          <div class="option-item ${isChecked ? (opt.isCorrect ? 'correct' : (selected === i ? 'wrong' : '')) : (selected === i ? 'selected' : '')} ${isChecked ? 'disabled' : ''}" 
+               onclick="selectOpt(${i})">
+            ${opt.text}
+          </div>
+        `).join('')}
+      </div>
+
+      ${isChecked ? `
+        <div class="rationale-box ${q.options[selected].isCorrect ? 'correct' : 'wrong'}">
+          <b>${q.options[selected].isCorrect ? '✨ เก่งมาก!' : '❌ ทบทวนกันนิด:'}</b> ${q.options[selected].rationale}
+        </div>
+        <button class="btn btn-primary" onclick="nextQ()">${currentQ === shuffledQuizData.length - 1 ? 'ดูสรุปและประเมินผล' : 'ข้อถัดไป ➡️'}</button>
+      ` : `
+        <button class="btn btn-primary" ${selected === null ? 'disabled' : ''} onclick="checkAns()">ยืนยันคำตอบ 🔎</button>
+      `}
+    </div>
+  `;
+}
+
+// ประกาศฟังก์ชันไว้ที่ระดับสากล (Global Window) ป้องกันบั๊กการหาฟังก์ชันไม่เจอตอน Render ใหม่[span_2](start_span)[span_2](end_span)
+window.selectOpt = function(i) {
+  if (!isChecked) {
+    selected = i;
+    renderQuiz();
+  }
+};
+
+window.checkAns = function() {
+  isChecked = true;
+  if (shuffledQuizData[currentQ].options[selected].isCorrect) {
+    score++;
+  }
+  renderQuiz();
+};
+
+window.nextQ = function() {
+  if (currentQ < shuffledQuizData.length - 1) {
+    currentQ++;
+    selected = null;
+    isChecked = false;
+    renderQuiz();
+  } else {
+    window.showSummary(); // เรียกหน้าสรุปคะแนนและประเมินผลเมื่อทำครบทุกข้อ
+  }
+};
+
+window.initQuiz = initQuiz;
+window.renderQuiz = renderQuiz;
+
+// ฟังก์ชันสรุปผลและประเมินผู้เรียน (ผูกเข้ากับ window ป้องกันปัญหากล่องประเมินผลไม่แสดง)[span_3](start_span)[span_3](end_span)
+window.showSummary = function() {
+  const container = document.getElementById('quiz-container');
+  
+  let evalTitle = "";
+  let evalDesc = "";
+  let evalColor = "";
+  
+  // เกณฑ์การประเมินผลรายบุคคล (เต็ม 20 คะแนน)
+  if (score >= 18) {
+    evalTitle = "ระดับ: อัจฉริยะกาลเวลา (Excellent) 🏆🌟";
+    evalDesc = "สุดยอดเหนือคำบรรยายครับ! คุณมีความแม่นยำในเรื่องคีย์เวิร์ดบอกเวลา (Time Expressions) และโครงสร้างประธาน-กริยาอย่างสมบูรณ์แบบ สามารถนำความรู้นี้ไปต่อยอดในทักษะการเขียนและการพูดสื่อสารขั้นสูงได้สบายมากครับ";
+    evalColor = "var(--success)";
+  } else if (score >= 14) {
+    evalTitle = "ระดับ: ดีมาก (Very Good) ⭐⭐";
+    evalDesc = "เก่งมากเลยครับ! คุณเข้าใจความแตกต่างระหว่างเรื่องในอดีต ปัจจุบัน และอนาคตได้เป็นอย่างดี มีหลุดเรื่องการเติม s/es หรือประธานเอกพจน์-พหูพจน์เพียงเล็กน้อยเท่านั้น โดยรวมถือว่าพร้อมสอบผ่านฉลุยครับ";
+    evalColor = "var(--primary)";
+  } else if (score >= 10) {
+    evalTitle = "ระดับ: ผ่านเกณฑ์พื้นฐาน (Fair) 👍";
+    evalDesc = "ยินดีด้วยครับ คุณสอบผ่านเกณฑ์พื้นฐานครึ่งทางแล้ว! คุณพอจะจำคำใบ้บอกเวลาอย่าง Yesterday หรือ Tomorrow ได้ดี แนะนำให้ทบทวนเรื่องโครงสร้างของ Present Continuous (กำลังทำอยู่) เพิ่มเติมอีกนิด จะเก่งขึ้นอีกเยอะเลยครับ";
+    evalColor = "var(--warning)";
+  } else {
+    evalTitle = "ระดับ: ควรฝึกฝนและทบทวน (Need Improvement) 📚";
+    evalDesc = "ไม่เป็นไรเลยครับ ความเข้าใจเรื่อง Tense ต้องอาศัยเวลาและการสังเกตบ่อยๆ แนะนำให้ลองกลับไปกด 'เล่นใหม่อีกครั้ง' แล้วค่อยๆ สังเกตคำใบ้สีเหลืองด้านบนของแต่ละข้อดูนะครับ มันจะช่วยให้คุณจับทางข้อสอบได้ง่ายขึ้นแน่นอน สู้ๆ ครับ!";
+    evalColor = "var(--danger)";
+  }
+
+  container.innerHTML = `
+    <div class="card" style="text-align:center">
+      <h2 style="font-size:32px; margin-bottom: 5px;">🎉 จบภารกิจสำเร็จ!</h2>
+      <p style="color: #64748b; font-weight: 500;">สรุปผลการประเมินเรื่อง Tense ภาษาอังกฤษ</p>
+      
+      <div style="font-size:65px; font-weight:800; color:var(--primary); margin: 15px 0;">${score}/${shuffledQuizData.length}</div>
+      
+      <!-- กล่องประเมินผลผู้เรียนที่ได้รับการแก้ไขให้แสดงผลแน่นอน -->
+      <div class="evaluation-box" style="border-left-color: ${evalColor};">
+        <b style="color: ${evalColor}; font-size: 17px; display: block; margin-bottom: 6px;">📊 ผลการประเมินผู้เรียนรายบุคคล:</b>
+        <span style="font-weight: 700; font-size: 16px; color: #1e293b;">${evalTitle}</span>
+        <p style="margin-top: 8px; font-size: 14px; color: #475569; font-weight: 400; line-height: 1.6;">${evalDesc}</p>
+      </div>
+
+      <button class="btn btn-primary" onclick="window.initQuiz(); window.renderQuiz();">🔄 เล่นใหม่อีกครั้ง (ระบบจะสุ่มข้อใหม่)</button>
+    </div>
+  `;
+};
+
+// สั่งให้ระบบเริ่มทำงานเมื่อโหลดหน้าเว็บครั้งแรก
+window.initQuiz();
+window.renderQuiz();
+</script>
+</body>
+</html>
