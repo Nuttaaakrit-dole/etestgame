@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intermediate Grammar Master: เกมตะลุยแกรมม่าระดับปานกลาง สกร.โนนสัง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ใช้ธีมสีเขียวมรกต-เทอร์ควอยซ์ สื่อถึงระดับปานกลางที่กำลังเติบโตและพัฒนา */
+    --primary: #0d9488; --primary-dark: #115e59; --primary-light: #f0fdfa;
+    --success: #166534; --success-light: #f0fdf4;
+    --danger: #991b1b; --danger-light: #fef2f2;
+    --warning: #b45309; --warning-light: #fffbeb;
+    --gray-bg: #f8fafc; --text: #0f172a;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: var(--gray-bg); color: var(--text); padding: 20px 10px; line-height: 1.6; }
+  .container { max-width: 600px; margin: 0 auto; }
+  
+  .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+  
+  .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
+  /* Progress Bar */
+  .progress-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .progress-bar-bg { flex-grow: 1; background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; }
+  .progress-bar-fill { background: var(--primary); height: 100%; width: 0%; transition: width 0.3s; }
+
+  /* Hint & Question */
+  .hint-box { background: var(--warning-light); border-left: 5px solid var(--warning); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: var(--warning); }
+  .question-text { font-size: 20px; font-weight: 700; margin-bottom: 15px; color: var(--primary-dark); background: var(--primary-light); padding: 15px; border-radius: 10px; text-align: center; border: 1px dashed #99f6e4; }
+  .instruction { font-size: 14px; color: #475569; margin-bottom: 10px; font-weight: 600; }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: 500; display: flex; align-items: center; }
+  .option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.correct { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+  .option-item.disabled { pointer-events: none; }
+
+  /* Rationale */
+  .rationale-box { margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 14px; animation: fadeIn 0.3s ease; }
+  .rationale-box.correct { background: var(--success-light); border: 1px dashed var(--success); color: var(--success); }
+  .rationale-box.wrong { background: var(--danger-light); border: 1px dashed var(--danger); color: var(--danger); }
+
+  /* Evaluation Box */
+  .evaluation-box { margin: 22px 0; padding: 18px; border-radius: 14px; background: #f8fafc; text-align: left; border-left: 6px solid #cbd5e1; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; animation: fadeIn 0.4s ease; }
+
+  .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 15px; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="quiz-container">
+    <!-- โครงสร้างจะถูกใส่ผ่าน JavaScript -->
+  </div>
+</div>
+
+<script>
+// คลังโจทย์ระดับปานกลาง (Intermediate) จำนวน 20 ข้อ
+const quizData = [
+  {
+    sentence: "When I was young, I ___________ live in a small village near Non Sang.",
+    hint: "พูดถึงความเคยชินหรือสิ่งที่ 'เคยทำเป็นประจำในอดีต' แต่ตอนนี้ไม่ได้ทำแล้ว โครงสร้างคือ ___________ + กริยาช่อง 1 ครับ",
+    options: [
+      { text: "used to", rationale: "ถูกต้องครับ! used to แปลว่า 'เคย' ใช้เล่าเรื่องราวหรือนิสัยในอดีตที่ปัจจุบันไม่ได้ทำแล้ว", isCorrect: true },
+      { text: "am used to", rationale: "ยังไม่ถูกครับ be used to + V.ing จะแปลว่า 'เคยชินกับ...' ซึ่งเป็นเรื่องปัจจุบันครับ", isCorrect: false },
+      { text: "use to", rationale: "ผิดแกรมม่าครับ ถ้าเป็นประโยคบอกเล่าในอดีตคำว่า use ต้องเติม d เป็น used เสมอครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ English every day is the best way to improve your skills.",
+    hint: "การนำคำกริยามาขึ้นต้นประโยคเพื่อทำหน้าที่เป็นประธาน (แปลว่า 'การเรียน') เราต้องเปลี่ยนกริยาให้อยู่ในรูปของ Gerund (V.ing) ครับ",
+    options: [
+      { text: "Studying", rationale: "เก่งมาก! Studying ในที่นี้ทำหน้าที่เป็นคำนาม (Gerund) แปลว่า 'การเรียน' เป็นประธานของประโยคได้ถูกต้อง", isCorrect: true },
+      { text: "Study", rationale: "ยังไม่ถูกครับ ถ้าขึ้นต้นด้วย Study เปล่าๆ จะกลายเป็นประโยคคำสั่งทันที เช่น Study hard! (จงตั้งใจเรียน)", isCorrect: false },
+      { text: "Studied", rationale: "ยังไม่ใช่ครับ กริยาช่อง 2 ไม่สามารถนำมาวางโดดๆ เป็นประธานของประโยคได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I am really looking forward to ___________ you next week.",
+    hint: "ข้อนี้เป็นสำนวนหลอกยอดฮิต! วลี 'look forward to' (ตั้งตารอคอย) ตัวคำว่า to ในที่นี้เป็น Preposition กฎคือต้องตามด้วยคำนามหรือ V.ing เท่านั้นครับ",
+    options: [
+      { text: "meeting", rationale: "สุดยอด! คุณไม่โดนโจทย์หลอก สำนวน looking forward to ต้องตามด้วย V.ing (meeting) เสมอครับ", isCorrect: true },
+      { text: "meet", rationale: "หลงกลโจทย์แล้วครับ! คนส่วนใหญ่คิดว่าหลัง to ต้องเป็นช่อง 1 เปล่าๆ แต่ไม่ใช่กับสำนวนนี้ครับ", isCorrect: false },
+      { text: "met", rationale: "ยังไม่ถูกครับ met เป็นกริยาอดีตช่อง 2 ไม่สามารถตามหลังสำนวนนี้ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "At 10 PM tomorrow, I ___________ a movie in the cinema.",
+    hint: "เป็นการบอกเหตุการณ์ในอนาคตแบบ 'ระบุเวลาเจาะจงเป๊ะๆ' (พรุ่งนี้ตอนสี่ทุ่มฉันจะกำลังทำสิ่งนั้นอยู่) โครงสร้างคือ will be + V.ing (Future Continuous)",
+    options: [
+      { text: "will be watching", rationale: "ถูกต้อง! มีการระบุเวลาชัดเจนในอนาคต (10 PM tomorrow) ต้องใช้โครงสร้างกำลังจะทำในอนาคตครับ", isCorrect: true },
+      { text: "will watch", rationale: "ยังไม่เป๊ะครับ will watch บอกแค่ว่าจะดูในอนาคตทั่วไป แต่ไม่ได้เน้นย้ำช่วงเวลาเจาะจงเหมือน will be watching ครับ", isCorrect: false },
+      { text: "watch", rationale: "ไม่ถูกครับ watch เป็นปัจจุบันธรรมดา ใช้กับพรุ่งนี้ไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "You ___________ drive faster than the speed limit. It's dangerous and illegal.",
+    hint: "คำกริยาช่วยบอกความจำเป็นขั้นเด็ดขาด/สั่งห้ามเด็ดขาด แปลว่า 'ต้องไม่ทำ' เพราะอันตรายและผิดกฎหมาย",
+    options: [
+      { text: "must not", rationale: "ถูกต้อง! must not (mustn't) ใช้กับการสั่งห้ามเด็ดขาดหรือกฎหมายที่ต้องปฏิบัติตามครับ", isCorrect: true },
+      { text: "should not", rationale: "ยังไม่ถูกครับ should not เป็นเพียงคำแนะนำว่าไม่ควรทำ แต่โจทย์ระบุว่ามันผิดกฎหมาย (illegal) ต้องใช้คำที่แรงกว่านั้นครับ", isCorrect: false },
+      { text: "don't have to", rationale: "ผิดความหมายครับ don't have to แปลว่า 'ไม่จำเป็นต้องทำ' (แต่ถ้าอยากทำก็ทำได้) ซึ่งไม่ตรงกับโจทย์ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "This laptop is ___________ than that one.",
+    hint: "โครงสร้างการเปรียบเทียบขั้นกว่า (Comparative) คำว่า expensive (แพง) มี 3 พยางค์ เวลาทำเป็นขั้นกว่าต้องใช้คำว่าอะไรนำหน้าครับ",
+    options: [
+      { text: "more expensive", rationale: "เก่งมาก! คำยาวตั้งแต่ 2-3 พยางค์ขึ้นไป เมื่อเปรียบเทียบขั้นกว่า ให้ใช้ more นำหน้าตัวมันครับ", isCorrect: true },
+      { text: "expensiver", rationale: "ผิดแกรมม่าครับ เราจะไม่เติม -er ท้ายคำยาวๆ แบบนี้ครับ มันออกเสียงยาก", isCorrect: false },
+      { text: "most expensive", rationale: "ยังไม่ถูกครับ most ใช้กับการเปรียบเทียบขั้นสูงสุด (ที่สุด) แต่โจทย์นี้มีคำว่า than แปลว่าเปรียบเทียบขั้นกว่า", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "She has been playing tennis ___________ two hours. She looks tired.",
+    hint: "โครงสร้าง Present Perfect Continuous (เน้นการบอกว่าทำมาอย่างต่อเนื่องและยังทำอยู่) บอก 'จำนวนระยะเวลา' ความยาวนาน (2 ชั่วโมงเต็ม)",
+    options: [
+      { text: "for", rationale: "ถูกต้องครับ! ใช้ for ตามด้วยจำนวนระยะเวลาความยาวนาน (เป็นเวลา 2 ชั่วโมง)", isCorrect: true },
+      { text: "since", rationale: "ยังไม่ใช่ครับ since จะต้องตามด้วยจุดเริ่มต้นของเวลา เช่น ตั้งแต่บ่ายสองโมง (since 2 PM) ครับ", isCorrect: false },
+      { text: "already", rationale: "ไม่ใช่จ้า already แปลว่าเรียบร้อยแล้ว ไม่นำมาใช้วางหน้าจำนวนเวลาแบบนี้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "If you don't hurry, the bus ___________ by the time you get to the station.",
+    hint: "เหตุการณ์ในอนาคตที่คาดว่าจะ 'ทำเสร็จสิ้นสมบูรณ์ไปแล้ว' ก่อนอีกเหตุการณ์หนึ่งจะมาถึง โครงสร้าง Future Perfect คือ will have + กริยาช่อง 3",
+    options: [
+      { text: "will have left", rationale: "ยอดเยี่ยมมาก! รถไฟหรือรถบัสจะจากไปเรียบร้อยแล้วก่อนที่คุณจะไปถึง ใช้ will have + V.3 ถูกต้องตามหลักขั้นปานกลางครับ", isCorrect: true },
+      { text: "leaves", rationale: "ยังไม่ถูกครับ leaves เป็นปัจจุบันทั่วไป แต่โจทย์พูดถึงเงื่อนไขเหตุการณ์ในอนาคต", isCorrect: false },
+      { text: "is leaving", rationale: "ยังไม่ใช่ครับ is leaving แปลว่ากำลังจะออกตอนนี้ แต่ความหมายโจทย์คือมันจะออกไปเรียบร้อยก่อนเราไปถึงครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "We decided ___________ a new car because our old one kept breaking down.",
+    hint: "คำกริยาคำว่า decide (ตัดสินใจ) มีกฎแกรมม่าเฉพาะตัวว่าจะต้องตามด้วยโครงสร้าง Infinitive (to + กริยาช่อง 1 ไม่เติมอะไรเลย) เสมอครับ",
+    options: [
+      { text: "to buy", rationale: "ถูกต้อง! หลังกริยา decide ต้องเชื่อมด้วย to + V.1 (to buy) เสมอ จำไปใช้ในห้องสอบได้เลยครับ", isCorrect: true },
+      { text: "buying", rationale: "ยังไม่ถูกครับ กริยาบางตัวต้องตามด้วย V.ing แต่ไม่ใช่กับคำว่า decide ครับ", isCorrect: false },
+      { text: "buy", rationale: "ไม่ถูกต้องครับ อยู่ดีๆ จะเอากริยาแท้สองตัวมาวางชนกันชนโดยไม่มี to เชื่อมไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I enjoy ___________ books in my free time.",
+    hint: "ตรงกันข้ามกับข้อที่แล้ว! คำกริยาคำว่า enjoy (สนุกสนาน/เพลิดเพลิน) มีกฎว่าต้องตามด้วยกริยารูป Gerund (V.ing) เสมอครับ",
+    options: [
+      { text: "reading", rationale: "เก่งมาก! หลังคำว่า enjoy, stop, avoid ต้องตามด้วย V.ing (reading) เสมอครับ", isCorrect: true },
+      { text: "to read", rationale: "ยังไม่ถูกครับ enjoyจะไม่ใช้คู่กับ to + V.1 เด็ดขาดครับ", isCorrect: false },
+      { text: "read", rationale: "ไม่ใช่ครับ เอากริยาโจทย์มาวางต่อกันตรงๆ แบบนี้ไม่ได้นะ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The teacher made all the students ___________ their homework again.",
+    hint: "โครงสร้าง Causative Form! คำว่า make/made ในที่นี้ไม่ได้แปลว่าทำ แต่แปลว่า 'สั่งให้/บังคับให้' (สั่งให้ผู้อื่นทำบางอย่าง) กฎคือหลังคนต้องตามด้วยกริยาช่อง 1 แท้เปล่าๆ ไม่เติมอะไรเลย (Bare Infinitive)",
+    options: [
+      { text: "redo", rationale: "สุดยอด! โครงสร้าง สั่งให้คนทำสิ่งใด [make + ใครบางคน + V.1 เปล่า] ข้อนี้ยากแต่คุณตอบถูก", isCorrect: true },
+      { text: "to redo", rationale: "โดนโจทย์หลอกครับ ตัวคำว่า made มีพลังพิเศษ ห้ามใช้คู่กับคำว่า to ด้านหลังครับ", isCorrect: false },
+      { text: "redoing", rationale: "ยังไม่ถูกครับ โครงสร้างนี้ไม่ใช้รูปเติม -ing ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "He is the person ___________ helped me fix my motorcycle yesterday.",
+    hint: "Relative Pronoun (คำสรรพนามเชื่อมประโยค)! คำที่ใช้แทน 'คน' (the person) และทำหน้าที่เป็นประธานในประโยคย่อยคือคำว่าอะไรครับ",
+    options: [
+      { text: "who", rationale: "ถูกต้อง! who ใช้เชื่อมประโยคขยายความเกี่ยวกับ 'บุคคล' ได้ถูกต้องแม่นยำ", isCorrect: true },
+      { text: "which", rationale: "ยังไม่ถูกครับ which เอาไว้ใช้เชื่อมขยาย 'สิ่งของหรือสัตว์' ครับ", isCorrect: false },
+      { text: "where", rationale: "ไม่ใช่จ้า where เอาไว้ขยายเกี่ยวกับ 'สถานที่' ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The cake ___________ Somsri baked tasted delicious.",
+    hint: "คำสรรพนามเชื่อมประโยคที่ใช้ขยาย 'สิ่งของหรืออาหาร' (The cake) คือคำไหนครับ",
+    options: [
+      { text: "which", rationale: "ถูกต้อง! which (หรือ that) ใช้ขยายสิ่งของ สัตว์ หรือสถานที่ในแง่ของวัตถุได้ถูกต้องครับ", isCorrect: true },
+      { text: "who", rationale: "ไม่ถูกครับ who ใช้ขยายเฉพาะมนุษย์หรือบุคคลเท่านั้นครับ เค้กไม่ใช่คนนะ", isCorrect: false },
+      { text: "whose", rationale: "ยังไม่ใช่ครับ whose ใช้แสดงความเป็นเจ้าของ ต้องตามด้วยคำนามเสมอ เช่น whose car", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Neither my brother nor my friends ___________ to the party tonight.",
+    hint: "กฎประธาน-กริยาสัมพันธ์ (Subject-Verb Agreement)! โครงสร้าง Neither... nor... (ไม่ทั้ง...และ...) การผันกริยาจะผันตามประธาน 'ตัวที่อยู่ใกล้กริยาที่สุด' (my friends) ครับ",
+    options: [
+      { text: "are coming", rationale: "เก่งมาก! ตัวที่อยู่ใกล้ช่องว่างที่สุดคือ my friends (พหูพจน์ หลายคน) จึงเลือกใช้คู่กับ are coming ถูกต้องที่สุดครับ", isCorrect: true },
+      { text: "is coming", rationale: "เกือบถูกตามความรู้สึก แต่กฎระบุว่าให้ดูประธานตัวหลังสุดใกล้กริยา ซึ่งเพื่อนๆ มีหลายคน (เติม s) จึงใช้ is ไม่ได้ครับ", isCorrect: false },
+      { text: "comes", rationale: "ยังไม่ถูกครับ ผิดทั้งการผันประธานพหูพจน์และบริบทคืนนี้ (tonight) ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "You have already visited Bangkok, ___________?",
+    hint: "เรื่อง Question Tags (วลีคำถามท้ายประโยค)! ประโยคข้างหน้าเป็นบอกเล่าและใช้กริยาช่วยคือ 'have' ประโยคแท็กข้างหลังต้องเปลี่ยนเป็นปฏิเสธและใช้สรรพนามตัวเดิมครับ",
+    options: [
+      { text: "haven't you", rationale: "ถูกต้อง! ข้างหน้าบอกเล่า (have) ข้างหลังเป็นปฏิเสธ (haven't) ตรงตามกฎ Question Tags เป๊ะๆ", isCorrect: true },
+      { text: "don't you", rationale: "ยังไม่ถูกครับ เราจะใช้ don't ก็ต่อเมื่อประโยคด้านหน้าไม่มีกริยาช่วยตัวอื่นโผล่มาเลย แต่ข้อนี้เขามี have ให้แล้วครับ", isCorrect: false },
+      { text: "hasn't you", rationale: "ผิดแกรมม่าอย่างแรงครับ ประธาน you ไม่สามารถใช้คู่กับ hasn't ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "He went to work ___________ he was feeling very unwell.",
+    hint: "คำเชื่อมประโยคขัดแย้ง! (เขาออกไปทำงาน ___________ เขา รู้สึกไม่สบายมากๆ) ตัวเลือกไหนแปลว่า 'ทั้งๆ ที่ / แม้ว่า' ครับ",
+    options: [
+      { text: "although", rationale: "ถูกต้อง! although แปลว่า แม้ว่า/ทั้งๆ ที่ ใช้เชื่อมประโยคที่แสดงความขัดแย้งกันอย่างสมเหตุสมผล", isCorrect: true },
+      { text: "because", rationale: "ความหมายสลับกันครับ because แปลว่า 'เพราะว่า' ใช้บอกเหตุผลด้านบวกคล้อยตามกันครับ", isCorrect: false },
+      { text: "however", rationale: "ยังไม่เป๊ะครับ however แปลว่า อย่างไรก็ตาม มักจะขึ้นต้นประโยคใหม่และต้องมีเครื่องหมายจุลภาค (,) ตามท้ายครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I didn't see ___________ in the classroom. It was completely empty.",
+    hint: "ประโยคปฏิเสธ (didn't) กฎไวยากรณ์คือคำว่า 'ใครเลย' ในประโยคปฏิเสธหรือประโยคคำถาม เราจะหันไปใช้สรรพนามตระกูล any- ครับ",
+    options: [
+      { text: "anyone", rationale: "เก่งมาก! ในประโยคปฏิเสธเรานิยมใช้ anyone (หรือ anybody) สื่อความหมายว่าไม่เจอใครเลยสักคน", isCorrect: true },
+      { text: "someone", rationale: "ยังไม่ถูกครับ someone แปลว่าบางคน นิยมใช้เฉพาะในประโยคบอกเล่าทั่วไปครับ", isCorrect: false },
+      { text: "no one", rationale: "หลงกลความหมายซ้อนครับ! ตัวประโยคมี didn't (ปฏิเสธ) อยู่แล้ว ถ้าใส่ no one ซ้อนเข้าไปอีกจะกลายเป็นปฏิเสธซ้อนปฏิเสธ ซึ่งผิดหลักภาษาอังกฤษครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "By the time the police arrived, the thief ___________.",
+    hint: "เหตุการณ์ในอดีตซ้อนกัน! ขโมยได้วิ่งหนีไปเรียบร้อยแล้ว (เกิดก่อน ใช้ Past Perfect: had + V.3) ก่อนที่ตำรวจจะเดินทางมาถึงทีหลัง (arrived ช่อง 2)",
+    options: [
+      { text: "had escaped", rationale: "ถูกต้อง! ขโมยหนีไปก่อนที่ตำรวจจะมา ใช้ had + ช่อง 3 เล่าเรื่องที่เสร็จสิ้นก่อนในอดีตได้ยอดเยี่ยม", isCorrect: true },
+      { text: "has escaped", rationale: "ยังไม่ถูกครับ has เป็นรูปปัจจุบัน แต่ตำรวจมาถึง (arrived) เป็นอดีตไปแล้ว กาลเวลาขัดกันครับ", isCorrect: false },
+      { text: "escapes", rationale: "ไม่ใช่ครับ อันนี้เป็นกริยาปัจจุบันธรรมดา", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "This office ___________ every evening by the cleaning staff.",
+    hint: "ประโยคถูกกระทำ (Passive Voice)! ออฟฟิศเป็นสิ่งก่อสร้าง มันไม่สามารถ 'ทำความสะอาดตัวเอง' ได้ และทำเป็นประจำทุกเย็น โครงสร้างคือ is/am/are + V.3",
+    options: [
+      { text: "is cleaned", rationale: "ถูกต้อง! ออฟฟิศห้องเดียว (เอกพจน์) + รูปถูกกระทำช่อง 3 (is cleaned) สื่อความหมายว่าถูกทำความสะอาดอย่างถูกต้อง", isCorrect: true },
+      { text: "cleans", rationale: "ยังไม่ถูกครับ ถ้าตอบ cleans จะแปลว่าออฟฟิศหยิบไม้กวาดขึ้นมาทำความสะอาดสิ่งอื่นครับ", isCorrect: false },
+      { text: "was cleaned", rationale: "โครงสร้างถูกครับ แต่โจทย์ระบุว่าทุกๆ เย็น (every evening) สื่อถึงปัจจุบันเป็นประจำ จึงควรใช้ is แทน was ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "English is considered ___________ than many other languages.",
+    hint: "คำว่า easy (ง่าย) เป็นคำสั้น 2 พยางค์ที่ลงท้ายด้วยตัว y กฎการเปลี่ยนเป็นขั้นกว่าต้องเปลี่ยนตัว y เป็นตัวอะไรแล้วเติมอะไรข้างท้ายครับ",
+    options: [
+      { text: "easier", rationale: "ยอดเยี่ยมมากครับ! ตอบถูกข้อสุดท้ายพอดี คำลงท้ายด้วย y ให้เปลี่ยน y เป็น i แล้วเติม -er (easier) ครับ เก่งมากๆ", isCorrect: true },
+      { text: "more easy", rationale: "ยังไม่ถูกครับ คำสั้นลงท้ายด้วย y มีกฎเฉพาะตัวให้เปลี่ยนรูปท้ายคำไปเลย ไม่ใส่ more ด้านหน้าครับ", isCorrect: false },
+      { text: "easiest", rationale: "ยังไม่ใช่ครับ easiest เป็นขั้นสูงสุด (ง่ายที่สุด) แต่โจทย์มีคำว่า than แปลว่าเปรียบเทียบขั้นกว่าระหว่างสองสิ่งครับ", isCorrect: false }
+    ]
+  }
+];
+
+// ฟังก์ชันสลับข้อสอบและตัวเลือก
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let shuffledQuizData = [];
+let currentQ = 0;
+let score = 0;
+let selected = null;
+let isChecked = false;
+
+// เริ่มต้นกระบวนการสุ่มระบบใหม่
+function initQuiz() {
+  shuffledQuizData = shuffleArray([...quizData].map(q => ({
+    ...q,
+    options: shuffleArray([...q.options])
+  })));
+  currentQ = 0;
+  score = 0;
+  selected = null;
+  isChecked = false;
+}
+
+// เรนเดอร์หน้าจอทำข้อสอบ
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  const q = shuffledQuizData[currentQ];
+  const pct = (currentQ / shuffledQuizData.length) * 100;
+
+  container.innerHTML = `
+    <div class="header">
+      <h1>Intermediate Grammar Master 🧭</h1>
+      <p>เลเวลปานกลาง: ตะลุยด่านยกระดับภาษาอังกฤษ สกร.อำเภอโนนสัง</p>
+    </div>
+
+    <div class="card">
+      <div class="progress-container">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span>${currentQ + 1}/${shuffledQuizData.length}</span>
+      </div>
+
+      <div class="hint-box">💡 <b>คำใบ้วิเคราะห์ไวยากรณ์:</b> ${q.hint}</div>
+      
+      <div class="instruction">⚡ เลือกตัวเลือกที่สอดคล้องกับหลักไวยากรณ์ปานกลาง:</div>
+      <div class="question-text">${q.sentence}</div>
+
+      <div class="options-list">
+        ${q.options.map((opt, i) => `
+          <div class="option-item ${isChecked ? (opt.isCorrect ? 'correct' : (selected === i ? 'wrong' : '')) : (selected === i ? 'selected' : '')} ${isChecked ? 'disabled' : ''}" 
+               onclick="window.selectOpt(${i})">
+            ${opt.text}
+          </div>
+        `).join('')}
+      </div>
+
+      ${isChecked ? `
+        <div class="rationale-box ${q.options[selected].isCorrect ? 'correct' : 'wrong'}">
+          <b>${q.options[selected].isCorrect ? '✨ สุดยอด ถูกต้อง!' : '❌ จุดที่ต้องจดจำ:'}</b> ${q.options[selected].rationale}
+        </div>
+        <button class="btn btn-primary" onclick="window.nextQ()">${currentQ === shuffledQuizData.length - 1 ? 'คำนวณและประเมินผลลัพธ์' : 'ข้อถัดไป ➡️'}</button>
+      ` : `
+        <button class="btn btn-primary" ${selected === null ? 'disabled' : ''} onclick="window.checkAns()">ส่งคำตอบตรวจ 🔎</button>
+      `}
+    </div>
+  `;
+}
+
+// ผูกฟังก์ชันเข้ากับ Global Scope (window) เพื่อแก้ปัญหาระบบหาฟังก์ชันไม่เจอตอน Re-render
+window.selectOpt = function(i) {
+  if (!isChecked) {
+    selected = i;
+    renderQuiz();
+  }
+};
+
+window.checkAns = function() {
+  isChecked = true;
+  if (shuffledQuizData[currentQ].options[selected].isCorrect) {
+    score++;
+  }
+  renderQuiz();
+};
+
+window.nextQ = function() {
+  if (currentQ < shuffledQuizData.length - 1) {
+    currentQ++;
+    selected = null;
+    isChecked = false;
+    renderQuiz();
+  } else {
+    window.showSummary(); // เรียกทำงานส่วนสรุปผลคะแนน
+  }
+};
+
+window.initQuiz = initQuiz;
+window.renderQuiz = renderQuiz;
+
+// ฟังก์ชันสรุปผลและประเมินสมรรถนะผู้เรียนรายบุคคล (การันตีการแสดงผล 100%)
+window.showSummary = function() {
+  const container = document.getElementById('quiz-container');
+  
+  let evalTitle = "";
+  let evalDesc = "";
+  let evalColor = "";
+  
+  // เกณฑ์การประเมินระดับความสามารถปานกลาง (คะแนนเต็ม 20 ข้อ)
+  if (score >= 18) {
+    evalTitle = "ระดับ: ผู้เชี่ยวชาญไวยากรณ์ปานกลาง (Grammar Specialist) 🏆🟢";
+    evalDesc = "น่าทึ่งมากครับ! คุณมีความสามารถทางภาษาอังกฤษในระดับปานกลางที่แข็งแกร่งและโดดเด่นมาก สามารถเข้าใจกฎยกเว้นที่ซับซ้อน เช่น สำนวนเฉพาะ, ตัวเชื่อมประโยคขัดแย้ง และกริยาควบคุม (Gerund/Infinitive) ได้อย่างแม่นยำ คุณพร้อมที่จะก้าวเข้าสู่ด่านไวยากรณ์ขั้นสูง (Advanced) ต่อไปแล้วครับ";
+    evalColor = "var(--success)";
+  } else if (score >= 14) {
+    evalTitle = "ระดับ: มีความเข้าใจเกณฑ์ดี (Independent Learner) 🌟";
+    evalDesc = "เก่งมากเลยครับ! คะแนนระบุว่าคุณมีพื้นฐานความรู้ความเข้าใจในหลักไวยากรณ์ระดับกลางที่ค่อนข้างดีเยี่ยม สามารถทำข้อสอบวัดระดับส่วนใหญ่ได้สบาย มีจุดหลุดโฟกัสในกลุ่มประธาน-กริยาสัมพันธ์ (Neither/Nor) และคำสั่ง Causative เพียงเล็กน้อยเท่านั้น ทบทวนเพิ่มอีกนิดจะไร้พ่ายแน่นอน";
+    evalColor = "var(--primary)";
+  } else if (score >= 10) {
+    evalTitle = "ระดับ: ผ่านเกณฑ์มาตรฐานระดับกลาง (Intermediate Pass) 👍";
+    evalDesc = "ยินดีด้วยครับ คุณผ่านเกณฑ์มาตรฐานระดับปานกลางมาได้สำเร็จ! คุณเริ่มแยกแยะความแตกต่างระหว่างขั้นกว่า (Comparative) และเข้าใจคำสรรพนามเชื่อมเบื้องต้นได้แล้ว แนะนำให้ลองกดเล่นซ้ำเพื่อจดจำรูปแบบกริยาเฉพาะกลุ่ม (enjoy/decide) เพื่อพัฒนาความแม่นยำให้สูงขึ้นครับ";
+    evalColor = "var(--warning)";
+  } else {
+    evalTitle = "ระดับ: ควรเสริมความรู้พื้นฐานระดับกลาง (Review Needed) 📚";
+    evalDesc = "พยายามได้ดีมากครับ! ไม่ต้องท้อแท้ไปนะครับ ข้อสอบชุดนี้เป็นด่านระดับปานกลางจึงมีเงื่อนไขและกฎไวยากรณ์เฉพาะตัวแทรกอยู่ค่อนข้างเยอะ แนะนำให้คุณลองกด 'เล่นใหม่อีกครั้ง' แล้วสังเกต 'กล่องคำใบ้สีเหลือง' ด้านบนก่อนตอบ จะช่วยให้คุณเข้าใจหลักการคิดและจดจำรูปแบบได้ดีขึ้นอย่างแน่นอนครับ สู้ๆ!";
+    evalColor = "var(--danger)";
+  }
+
+  container.innerHTML = `
+    <div class="card" style="text-align:center">
+      <h2 style="font-size:32px; margin-bottom: 5px;">🎉 สำเร็จภารกิจด่านกลาง!</h2>
+      <p style="color: #475569; font-weight: 500;">สรุปผลการประเมินวิเคราะห์ Intermediate Grammar</p>
+      
+      <div style="font-size:68px; font-weight:800; color:var(--primary); margin: 15px 0;">${score}/${shuffledQuizData.length}</div>
+      
+      <!-- กล่องรายงานผลประเมินที่ถูกแก้ไขเชิงระบบให้แสดงผลฉลุย -->
+      <div class="evaluation-box" style="border-left-color: ${evalColor};">
+        <b style="color: ${evalColor}; font-size: 17px; display: block; margin-bottom: 6px;">📊 ผลการประเมินศักยภาพผู้เรียน:</b>
+        <span style="font-weight: 700; font-size: 16px; color: #0f172a;">${evalTitle}</span>
+        <p style="margin-top: 8px; font-size: 14px; color: #334155; font-weight: 400; line-height: 1.6;">${evalDesc}</p>
+      </div>
+
+      <button class="btn btn-primary" onclick="window.initQuiz(); window.renderQuiz();">🔄 ทดสอบใหม่อีกครั้ง (สุ่มและสลับโจทย์ใหม่ทั้งหมด)</button>
+    </div>
+  `;
+};
+
+// รันระบบครั้งแรกเมื่อเปิดหน้ากระดานเว็บ
+window.initQuiz();
+window.renderQuiz();
+</script>
+</body>
+</html>
