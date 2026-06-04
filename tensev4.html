@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Grammar Boss Fight: ด่านท้าทายระดับเซียน สกร.โนนสัง</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ธีมสีแดงเข้ม-ทอง สื่อถึงด่านบอสใหญ่ระดับยากมาก (Advanced / Expert) */
+    --primary: #991b1b; --primary-dark: #450a0a; --primary-light: #fef2f2;
+    --success: #166534; --success-light: #f0fdf4;
+    --danger: #991b1b; --danger-light: #fef2f2;
+    --warning: #854d0e; --warning-light: #fef9c3;
+    --gold: #d97706; --gray-bg: #f8fafc; --text: #0f172a;
+  }
+  body { font-family: 'Sarabun', sans-serif; background: var(--gray-bg); color: var(--text); padding: 20px 10px; line-height: 1.6; }
+  .container { max-width: 600px; margin: 0 auto; }
+  
+  .header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold); }
+  
+  .card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+
+  /* Progress Bar */
+  .progress-container { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .progress-bar-bg { flex-grow: 1; background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden; }
+  .progress-bar-fill { background: linear-gradient(90deg, var(--primary), var(--gold)); height: 100%; width: 0%; transition: width 0.3s; }
+
+  /* Hint & Question */
+  .hint-box { background: var(--warning-light); border-left: 5px solid var(--gold); padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; color: var(--warning); font-weight: 500; }
+  .question-text { font-size: 19px; font-weight: 700; margin-bottom: 15px; color: var(--primary-dark); background: var(--primary-light); padding: 18px; border-radius: 10px; text-align: center; border: 1px dashed var(--primary); }
+  .instruction { font-size: 14px; color: #475569; margin-bottom: 10px; font-weight: 600; }
+
+  /* Options */
+  .options-list { display: flex; flex-direction: column; gap: 12px; }
+  .option-item { padding: 15px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: 0.2s; font-size: 16px; font-weight: 500; display: flex; align-items: center; }
+  .option-item:hover { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.correct { border-color: var(--success); background: var(--success-light); color: var(--success); }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-light); color: var(--danger); }
+  .option-item.disabled { pointer-events: none; }
+
+  /* Rationale */
+  .rationale-box { margin-top: 20px; padding: 15px; border-radius: 12px; font-size: 14px; animation: fadeIn 0.3s ease; }
+  .rationale-box.correct { background: var(--success-light); border: 1px dashed var(--success); color: var(--success); }
+  .rationale-box.wrong { background: var(--danger-light); border: 1px dashed var(--danger); color: var(--danger); }
+
+  /* Evaluation Box */
+  .evaluation-box { margin: 22px 0; padding: 18px; border-radius: 14px; background: #f8fafc; text-align: left; border-left: 6px solid #cbd5e1; border-top: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; animation: fadeIn 0.4s ease; }
+
+  .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 15px; }
+  .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border: 1px solid var(--gold); }
+  .btn-primary:disabled { background: #cbd5e1; border: none; color: #94a3b8; cursor: not-allowed; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="quiz-container">
+    <!-- ควบคุมการวาดโครงสร้างโดย JavaScript -->
+  </div>
+</div>
+
+<script>
+// คลังโจทย์ระดับยากมาก (Advanced / Expert) จำนวน 20 ข้อ
+const quizData = [
+  {
+    sentence: "Hardly ___________ entered the classroom when the exam sheets were distributed.",
+    hint: "โครงสร้างปฏิเสธขึ้นต้นประโยค (Inversion)! เมื่อนำคำปฏิเสธที่มีความหมายว่า แทบจะไม่ (Hardly) มาวางขึ้นต้นประโยค เราต้องสลับโครงสร้างประโยคด้านหลังให้เป็นรูปคล้าย 'ประโยคคำถาม' ครับ",
+    options: [
+      { text: "had the teacher", rationale: "ถูกต้องขั้นเทพ! หลังคำปฏิเสธขึ้นต้นประโยค (Hardly) ต้องทำ Inversion สลับกริยาช่วย had มาไว้หน้าประธาน (had + subject + V.3)", isCorrect: true },
+      { text: "the teacher had", rationale: "ยังไม่ถูกครับ อันนี้เป็นโครงสร้างประโยคบอกเล่าธรรมดา หากใช้แบบนี้ต้องวาง Hardly ไว้หลังกริยาช่วยครับ", isCorrect: false },
+      { text: "did the teacher", rationale: "เกือบถูกเรื่องการสลับกริยา แต่กริยาด้านหลังคือ entered (ช่อง 3 เติม -ed) จึงต้องใช้คู่กับ had (Past Perfect) เท่านั้นครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The director insisted that everyone ___________ present at the mandatory meeting tomorrow.",
+    hint: "เรื่อง Subjunctive Mood (กริยาสมมุติเพื่อบังคับ/ขอร้อง)! หลังกริยาบ่งชี้คำสั่งหรือการยืนกราน เช่น insist, recommend, suggest, demand เชื่อมด้วยคำว่า 'that' กริยาในประโยคย่อยต้องเป็นรูปดั้งเดิม (V.inf) ห้ามผันตามประธานเด็ดขาด",
+    options: [
+      { text: "be", rationale: "ถูกต้องที่สุด! นี่คือข้อสอบปราบเซียนระดับชาติ โครงสร้าง Subjunctive บังคับให้ใช้กริยาฐานดั้งเดิม (Infinitive) ซึ่งในที่นี้คือคำว่า 'be' โดยห้ามผันเป็น is/am/are เด็ดขาดครับ", isCorrect: true },
+      { text: "is", rationale: "โดนหลอกเต็มๆ ครับ! แม้ประธานจะเป็น everyone และเหตุการณ์เกิดพรุ่งนี้ แต่กฎของ Subjunctive Mood จะห้ามผันกริยาเด็ดขาดครับ", isCorrect: false },
+      { text: "should to be", rationale: "ผิดโครงสร้างไวยากรณ์ครับ หลังกริยาช่วยอย่าง should ไม่สามารถตามด้วยคำว่า to ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "If I had studied harder last semester, I ___________ in a university now.",
+    hint: "ประโยคเงื่อนไขแบบผสม (Mixed Conditional)! เงื่อนไขในฝั่ง If-clause เป็นอดีต (had studied) แต่ส่งผลกระทบต่อสิ่งที่เป็นอยู่ใน 'ปัจจุบัน' (มีคำว่า now บ่งชี้ท้ายประโยคชัดเจน)",
+    options: [
+      { text: "would be", rationale: "ยอดเยี่ยมมาก! ฝั่ง If เป็นอดีต (Past Perfect) ส่งผลถึงปัจจุบัน ประโยคผลลัพธ์จึงต้องใช้รูป [would + V.1ดั้งเดิม] เพื่อบอกสภาพในปัจจุบันครับ", isCorrect: true },
+      { text: "would have been", rationale: "ยังไม่ถูกครับ โครงสร้างนี้ใช้กับเงื่อนไขที่เป็นอดีตทั้งสองฝั่ง (Third Conditional) แต่โจทย์ระบุผลลัพธ์คือ ณ ตอนนี้ (now)", isCorrect: false },
+      { text: "will be", rationale: "ผิดเงื่อนไขครับ โครงสร้างผสมระหว่างอดีตและปัจจุบันไม่ใช้คู่กับ will ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "She ___________ her keys at the office yesterday because she couldn't open her car.",
+    hint: "การคาดเดาในอดีต (Modal of Deduction)! แปลว่า 'เธอต้องลืมกุญแจไว้ที่ออฟฟิศแน่ๆ' (มีความมั่นใจสูงมากต่อเหตุการณ์ในอดีต เพราะมีเหตุผลรองรับ) โครงสร้างคือ Modal + have + V.3",
+    options: [
+      { text: "must have left", rationale: "ถูกต้อง! must have + V.3 ใช้คาดเดาเหตุการณ์ในอดีตด้วยความมั่นใจเกือบ 100% ว่าเกิดสิ่งนั้นขึ้นจริง", isCorrect: true },
+      { text: "must leave", rationale: "ยังไม่ถูกครับ must + V.1 เปล่าๆ ใช้กับการคาดเดาหรือบังคับในเหตุการณ์ปัจจุบันหรืออนาคตเท่านั้นครับ", isCorrect: false },
+      { text: "should have left", rationale: "ความหมายเปลี่ยนครับ should have + V.3 แปลว่า 'รู้อย่างนี้ควรทำในอดีตแต่ไม่ได้ทำ' (เป็นการคร่ำครวญเสียดาย) ไม่ใช่การคาดเดาครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The ancient bridge ___________ by the local community last year has collapsed.",
+    hint: "การลดรูปประโยคคุณศัพท์ (Reduced Relative Clause)! ประโยคนี้มีกริยาแท้อยู่แล้วคือคำว่า 'has collapsed' (ได้พังทลายลงแล้ว) ดังนั้นส่วนขยายสะพานที่ 'ถูกสร้างขึ้น' ต้องลดรูปให้เหลือกริยาประเภทใด",
+    options: [
+      { text: "built", rationale: "สุดยอดมาก! built ในที่นี้คือรูป V.3 ที่ถูกลดรูปมาจากวลีเต็มๆ ว่า 'which was built' สื่อความหมายเป็นประธานถูกกระทำได้อย่างสมบูรณ์", isCorrect: true },
+      { text: "was built", rationale: "หลงกลข้อสอบแล้ว! ถ้าใส่ was built จะทำให้ประโยคนี้มีกริยาแท้ซ้อนกันสองตัวโดยไม่มีตัวเชื่อม (was built ซ้อนกับ has collapsed) ซึ่งผิดกฎทันทีครับ", isCorrect: false },
+      { text: "building", rationale: "ยังไม่ถูกครับ รูป V.ing จะนำมาใช้ลดรูปขยายประธานที่เป็นผู้กระทำสิ่งนั้นด้วยตัวเอง สะพานสร้างตัวเองไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Many business owners strongly object to ___________ higher taxes next fiscal year.",
+    hint: "คำกริยาเฉพาะกลุ่มที่ตามด้วย Preposition! คำว่า 'object to' (คัดค้านต่อ...) ตัวคำว่า to ในที่นี้ไม่ใช่โครงสร้างอินฟินิตีฟ แต่ทำหน้าที่เป็นบุพบท (Preposition) กฎเหล็กคือต้องตามด้วยสิ่งใดครับ",
+    options: [
+      { text: "paying", rationale: "เก่งกาจมาก! หลังคำว่า object to, look forward to, be used to ตัวคำว่า to เป็นบุพบท ต้องตามด้วยกริยารูป Gerund (V.ing) เสมอครับ", isCorrect: true },
+      { text: "pay", rationale: "ข้อสอบหลอกตาสำเร็จ! คนทั่วไปมักคิดว่าหลัง to ต้องเป็นกริยาช่อง 1 ตัวธรรมดา แต่ไม่ใช่กับคำว่า object to ครับ", isCorrect: false },
+      { text: "be paid", rationale: "ยังไม่ถูกครับ นอกจากจะผิดแกรมม่าเรื่อง V.ing แล้ว โครงสร้าง be paid ยังเปลี่ยนความหมายเป็นประธาน 'ถูกจ่ายเงิน' อีกด้วยครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The total number of students passing the competitive national exams ___________ increased this year.",
+    hint: "ความสัมพันธ์ประธานและกริยาขั้นสูง (Subject-Verb Agreement)! สำนวนกลุ่มคำบอกจำนวนมีความแตกต่างกัน ระหว่างคำว่า 'A number of + นามพหูพจน์ (ใช้กริยาพหูพจน์)' กับ 'The number of + นามพหูพจน์ (ใช้กริยาเอกพจน์)'",
+    options: [
+      { text: "has", rationale: "ถูกต้อง! คำว่า 'The number of...' สื่อถึง 'จำนวนรวม' ถือเป็นประธานกลุ่มเอกพจน์ จึงต้องเลือกใช้คู่กับกริยาเอกพจน์อย่าง has ครับ", isCorrect: true },
+      { text: "have", rationale: "โดนหลอกเพราะเห็นคำว่า students แน่ๆ! จำไว้ว่าถ้าขึ้นต้นด้วย The number of ให้มองข้ามคำนามพหูพจน์ด้านหลังไปได้เลยครับ", isCorrect: false },
+      { text: "are", rationale: "ยังไม่ใช่ครับ นอกจากจะผิดพจน์ของประธานแล้ว ด้านหลังช่องว่างเป็นกริยา V.3 (increased) จะใช้ are นำหน้าในรูปบอกเล่าไม่ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ I known about the severe flash floods, I would have rescheduled my flight.",
+    hint: "การลดรูปและสลับกริยาในประโยคเงื่อนไข (Inverted Conditional)! โครงสร้างนี้ดัดแปลงมาจากประโยคเงื่อนไขแบบที่ 3 (If I had known...) เมื่อเราตัดสินใจตัดคำว่า If ทิ้งไป จะต้องสลับคำใดขึ้นต้นแทน",
+    options: [
+      { text: "Had", rationale: "ถูกต้องระดับเซียน! การละ If ในเงื่อนไขแบบที่ 3 ทำได้โดยการดึงกริยาช่วย 'Had' มาวางหน้าประธาน เป็นโครงสร้าง Had I known... ครับ", isCorrect: true },
+      { text: "If", rationale: "ยังไม่ถูกครับ ถ้าคุณเลือก If โครงสร้างจะต้องเรียงปกติคือ If I had known ไม่ใช่เอาประธานไปวางหลังช่องว่างแบบนี้ครับ", isCorrect: false },
+      { text: "Should", rationale: "ไม่ใช่ครับ Should จะใช้ในการละรูปประโยคเงื่อนไขแบบที่ 1 (If you should need -> Should you need)", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ all her medical research papers, Dr. Somsri finally decided to take a break.",
+    hint: "ประโยคย่อยขยายประธานที่บอกความเสร็จสิ้นสมบูรณ์ (Perfect Participle)! สื่อความหมายว่า 'หลังจากที่เธอได้ทำการทำรายงานวิจัยทุกชิ้นเสร็จสิ้นลงเรียบร้อยแล้ว' เธอจึงตัดสินใจพักผ่อน โครงสร้างคือ Having + V.3",
+    options: [
+      { text: "Having finished", rationale: "ยอดเยี่ยม! Having finished เป็นโครงสร้าง Perfect Participle Clause ใช้เน้นย้ำว่าเหตุการณ์แรกทำเสร็จอย่างสมบูรณ์ก่อนเหตุการณ์สองจะเกิด", isCorrect: true },
+      { text: "Finishing", rationale: "ยังไม่เป๊ะครับ รูป V.ing ทั่วไปจะใช้กับเหตุการณ์ที่เกิดขึ้นพร้อมๆ กันหรือต่อเนื่องทันที แต่บริบทนี้ต้องการเน้นความเสร็จสิ้นสมบูรณ์ของงานวิจัยชิ้นยาวครับ", isCorrect: false },
+      { text: "Finished", rationale: "ยังไม่ถูกครับ รูป V.3 โดดๆ จะกลายเป็นการลดรูปประเภทถูกกระทำ สื่อความหมายว่า ดร.สมศรี ถูกคนอื่นทำเสร็จ ซึ่งผิดมนุษย์ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I desperately need to get my malfunctioning computer ___________ as soon as possible.",
+    hint: "โครงสร้างให้ผู้อื่นทำงานให้ (Causative FormแบบPassive)! โครงสร้างคือ [Get + สิ่งของ/วัตถุ + กริยาช่องที่ 3] สื่อความหมายว่า นำคอมพิวเตอร์ไปรับการซ่อมแซมโดยช่าง",
+    options: [
+      { text: "repaired", rationale: "ถูกต้อง! เมื่อส่งสิ่งของ (computer) ไปจัดการ โครงสร้างจะบังคับให้ปิดท้ายด้วยกริยาช่อง 3 เสมอ (get something done)", isCorrect: true },
+      { text: "to repair", rationale: "โดนหลอกครับ! โครงสร้าง get + คน + to V.1 (ใช้กับบุคคล) แต่ในโจทย์ด้านหลัง get เป็นสิ่งของ จึงห้ามใส่ to ครับ", isCorrect: false },
+      { text: "repairing", rationale: "ยังไม่ถูกครับ โครงสร้างนี้ไม่มีการใช้รูปเติม -ing ขยายท้ายสิ่งของในเชิงถูกกระทำครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The suspenseful horror film was so terrifying that she could not help ___________.",
+    hint: "สำนวนกริยาเฉพาะทาง! วลีคำว่า 'cannot help' หรือ 'could not help' ในภาษาอังกฤษไม่ได้แปลว่าไม่สามารถช่วยเหลือได้ แต่เป็นสำนวนแปลว่า 'อดไม่ได้ที่จะ... / กลั้นเอาไว้ไม่อยู่' กฎคือต้องตามด้วยโครงสร้างเฉพาะตัว",
+    options: [
+      { text: "screaming", rationale: "เก่งมาก! สำนวน cannot help + V.ing (screaming) แปลว่า อดใจที่จะกรีดร้องออกมาไม่ได้ มีความหมายลึกซึ้งและออกสอบบ่อย", isCorrect: true },
+      { text: "to scream", rationale: "ยังไม่ถูกครับ สำนวนนี้มีกฎเฉพาะเจาะจงว่าห้ามใช้คู่กับโครงสร้างอินฟินิตีฟที่มี to นำหน้าครับ", isCorrect: false },
+      { text: "scream", rationale: "ไม่ใช่ครับ ไม่สามารถวางกริยาเปล่าๆ ซ้อนด้านหลังคำว่า help ในสำนวนเฉพาะข้อนี้ได้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The corrupt politician is reported ___________ the country late last night.",
+    hint: "โครงสร้างประโยคถูกกระทำขั้นสูง (Advanced Passive with Perfect Infinitive)! แปลว่า 'นักการเมืองคนดังกล่าวถูกรายงานว่า [ได้แอบหลบหนีออกนอกประเทศไปเรียบร้อยแล้วเมื่อคืนนี้]' เหตุการณ์การหนีเกิดก่อนการรายงานตัว ใช้โครงสร้าง to have + V.3",
+    options: [
+      { text: "to have fled", rationale: "สมฐานะเซียนไวยากรณ์! เมื่อสิ่งที่ถูกรายงานเกิดขึ้นและจบลงไปก่อนหน้าในอดีต (last night) แกรมม่าขั้นสูงบังคับให้ใช้รูป Perfect Infinitive (to have + V.3) ครับ", isCorrect: true },
+      { text: "to flee", rationale: "ยังไม่สมบูรณ์ครับ โครงสร้าง to + V.1 ปกติ จะใช้บอกเหตุการณ์ที่เกิดขึ้นในเวลาเดียวกันหรืออนาคตของการรายงาน ไม่เข้ากับคำว่าเมื่อคืนนี้", isCorrect: false },
+      { text: "fleeing", rationale: "ผิดโครงสร้าง Passive Voice รูปประโยค Is reported ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "___________ hard he tries to master English grammar, he still makes minor mistakes.",
+    hint: "คำเชื่อมบอกความขัดแย้งเชิงปริมาณ! (ไม่ว่าเขาจะพยายาม 'หนักหนาสาหัสสักเพียงใด' เขาก็ยังทำผิดพลาดเล็กๆ น้อยๆ) โครงสร้างคือ [___________ + Adverb/Adjective + ประธาน + กริยา]",
+    options: [
+      { text: "However", rationale: "ถูกต้องที่สุด! However ในความหมายขั้นสูงแปลว่า 'ไม่ว่า...สักเพียงใด' มักจะตามด้วยคำคุณศัพท์หรือคำวิเศษณ์ (hard) เพื่อแสดงความขัดแย้ง", isCorrect: true },
+      { text: "Although", rationale: "โดนหลอกครับ! แม้ความหมายจะดูเข้าเค้า แต่วิธีใช้ Although จะต้องตามด้วยประธานทันที ไม่สามารถเอาคำวิเศษณ์อย่าง hard มาคั่นหน้าแบบนี้ได้ครับ", isCorrect: false },
+      { text: "Whatever", rationale: "ยังไม่ใช่ครับ Whatever แปลว่า 'ไม่ว่าอะไรก็ตาม' มักจะต้องทำหน้าที่คู่กับคำนาม ไม่ใช่คำวิเศษณ์บอกระดับความยากลำบากครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "It is high time the government ___________ effective measures against inflation.",
+    hint: "สำนวนคาดหวังแกมประชดประชัน! วลี 'It is high time...' แปลว่า 'ได้เวลาอันสมควรยิ่งแล้วที่ใครต้องทำสิ่งใด (แต่ในความเป็นจริงยังไม่ได้ทำหรือทำช้าเกินไป)' โครงสร้างบังคับให้ประโยคย่อยด้านหลังใช้ Tense ใด",
+    options: [
+      { text: "took", rationale: "เก่งมาก! นี่คือรูปกาลเวลาสมมุติ (Unreal Past) หลังสำนวน It is high time + ประธาน + กริยาช่องที่ 2 (took) เสมอเพื่อสื่อความประชดประชัน", isCorrect: true },
+      { text: "takes", rationale: "ผิดเต็มๆ ครับ คนส่วนใหญ่คิดว่าเป็นเรื่องปัจจุบันเลยใช้ช่อง 1 แต่กฎไวยากรณ์บังคับให้ใช้รูปอดีตเพื่อแสดงความสมมุติครับ", isCorrect: false },
+      { text: "should take", rationale: "ยังไม่ถูกครับ ถึงแม้ภาษาไทยจะแปลว่าควรจะทำ แต่แกรมม่าอังกฤษห้ามใส่คำว่า should ไว้หลังสำนวนนี้เด็ดขาดครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "On her way to the market, Somsri stopped ___________ to her former teacher.",
+    hint: "การสลับความหมายของกริยา stop! ระหว่าง [Stop + V.ing = หยุดทำสิ่งนั้นไปเลย] กับ [Stop + to V.1 = หยุดการกระทำที่ทำอยู่เพื่อ 'แวะทำ' อีกสิ่งหนึ่ง]",
+    options: [
+      { text: "to talk", rationale: "ถูกต้อง! บริบทคือสมศรีเดินทางอยู่แล้วเธอทำการ 'หยุดเดิน' เพื่อ 'แวะพูดคุย' (to talk) กับคุณครูเก่าของเธอ", isCorrect: true },
+      { text: "talking", rationale: "ความหมายวิบัติทันทีครับ! ถ้าเลือก talking จะแปลว่า สมศรีเลิกพูดคุยกับคุณครูคนนี้ไปตลอดชีวิตในระหว่างเดินตลาด ซึ่งไม่เข้ากับบริบท", isCorrect: false },
+      { text: "talk", rationale: "ไม่ถูกโครงสร้างครับ หลังกริยา stop ไม่สามารถตามด้วยกริยาฐานช่อง 1 โดดๆ ได้", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "We deeply regret ___________ you that your funding proposal has been turned down.",
+    hint: "การสลับความหมายของกริยา regret! ระหว่าง [Regret + V.ing = รู้สึกเสียใจ/นึกเสียดายเรื่องที่ 'เคยทำพลาดในอดีต'] กับ [Regret + to V.1 = รู้สึกเสียใจแจ้งความทุกข์ร้อนที่ 'กำลังจะทำต่อจากนี้']",
+    options: [
+      { text: "to inform", rationale: "เฉียบคมมาก! เป็นจดหมายแจ้งข่าวร้ายอย่างเป็นทางการ จึงใช้รูป regret to inform แปลว่า 'ทางเรามีความเสียใจที่ต้องแจ้งให้ท่านทราบต่อจากนี้' ครับ", isCorrect: true },
+      { text: "informing", rationale: "สลับความหมายครับ ถ้าใช้ informing จะแปลว่า ทางเราขอนั่งนึกเสียใจในอดีตที่เคยไปแจ้งเรื่องให้ท่านทราบ ซึ่งผิดความตั้งใจของจดหมาย", isCorrect: false },
+      { text: "inform", rationale: "ไม่ใช่รูปกริยาที่ได้รับการยอมรับหลังคำขยายความรู้สึกเสียใจในลักษณะนี้ครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "He has ___________ knowledge of chemical engineering, so he cannot fix this nuclear reactor.",
+    hint: "การเลือกใช้คำบอกปริมาณเชิงปฏิเสธ (Quantifiers)! ความรู้ด้านวิศวกรรมเป็นคำนามนับไม่ได้ และโจทย์บอกผลลัพธ์ว่าเขา 'ไม่สามารถซ่อมเครื่องปฏิกรณ์ได้' แสดงว่าเขามีความรู้ประเภท 'แทบจะไม่มีเลย' (เชิงลบ)",
+    options: [
+      { text: "little", rationale: "แม่นยำมาก! little ใช้กับนามนับไม่ได้ สื่อความหมายในเชิงลบ (มีน้อยมากจนแทบไม่มีประโยชน์) ตรงตามเงื่อนไขที่ซ่อมแซมไม่ได้ครับ", isCorrect: true },
+      { text: "a little", rationale: "เกือบถูกแต่ผิดมิติความหมายครับ a little แปลว่า 'พอมีอยู่บ้าง' (เชิงบวก) ถ้าพอมีอยู่บ้างก็น่าจะพอช่วยซ่อมแซมได้บางส่วนครับ", isCorrect: false },
+      { text: "few", rationale: "ผิดประเภทคำนามครับ few จะใช้ได้เฉพาะกับคำนามพหูพจน์ที่นับได้เป็นชิ้นๆ เท่านั้นครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "Not only did the individual lose his identification card, but he ___________ his wallet.",
+    hint: "โครงสร้างคู่ขนานเชื่อมประโยคปฏิเสธ (Not only... but also...) เมื่อประโยคข้างหน้ามีการทำ Inversion ไปแล้ว (did the individual lose) ประโยคส่วนหลังต้องวางตำแหน่งคำว่า also ให้ถูกหลัก",
+    options: [
+      { text: "also lost", rationale: "ถูกต้อง! ในส่วนประโยคหลังเราเรียงตามไวยากรณ์ปกติ โดยวางคำว่า also ไว้หน้าคำกริยาแท้ช่อง 2 (also lost) ได้ถูกต้องสวยงาม", isCorrect: true },
+      { text: "lost also", rationale: "ยังไม่ถูกครับ คำว่า also จะไม่นิยมนำมาวางต่อท้ายกริยาแอคชั่นตรงๆ ในรูปประโยคสมบูรณ์แบบนี้ครับ", isCorrect: false },
+      { text: "did also lose", rationale: "ซับซ้อนเกินไปจนผิดกฎครับ ประโยคหลังคำเชื่อมประโยคนี้ไม่ต้องทำ Inversion ซ้ำสองครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "I truly wish I ___________ to my academic advisor's guidance last year.",
+    hint: "การแสดงความปรารถนาที่เป็นไปไม่ได้ (Wish Clause)! เป็นการนึกเสียดายในสิ่งที่เป็น 'อดีต' สื่อว่า 'ฉันหวังว่าฉันจะได้เชื่อฟังคำแนะนำของที่ปรึกษาเมื่อปีที่แล้ว (แต่ความจริงตอนนั้นไม่ได้ฟัง)' โครงสร้างปฏิเสธตรงข้ามอดีตคือ Tense ใด",
+    options: [
+      { text: "had listened", rationale: "เก่งมากครับ! การใช้ wish บอกความเสียดายในเรื่องราวอดีต (มีคำว่า last year) แกร มม่าระบุให้ใช้โครงสร้าง Past Perfect (had + V.3)", isCorrect: true },
+      { text: "listened", rationale: "ยังไม่ถูกครับ รูปกริยาช่อง 2 ใช้หลัง wish สื่อถึงความปรารถนาที่อยากให้เปลี่ยนไปในปัจจุบัน ไม่ใช่อดีตครับ", isCorrect: false },
+      { text: "would listen", rationale: "ยังไม่ใช่ครับ รูป would + V.1 ใช้แสดงความบ่นรำคาญใจหรืออยากเห็นพฤติกรรมเปลี่ยนแปลงในอนาคตครับ", isCorrect: false }
+    ]
+  },
+  {
+    sentence: "The historic mansion ___________ they lived for nearly a decade was demolished.",
+    hint: "ข้อสุดท้ายท้าทายขีดสุด! คำสรรพนามเชื่อมความสัมพันธ์ (Relative Pronoun)! สื่อความหมายว่า คฤหาสน์ประวัติศาสตร์หลังที่พวกเคยอาศัยอยู่ 'ข้างในนั้น' (lived ___________ the mansion) มาเป็นเวลานับทศวรรษได้ถูกทุบทำลายแล้ว",
+    options: [
+      { text: "in which", rationale: "คุณคือสุดยอดเซียนแกรมม่าตัวจริง ตอบถูกข้อสุดท้าย! in which มีค่าเท่ากับคำว่า where สามารถใช้ขยายสถานที่ที่ประธานเข้าไปใช้ชีวิตอยู่ภายในได้ถูกต้องตามหลักภาษาขั้นสูง", isCorrect: true },
+      { text: "which", rationale: "โดนโจทย์หลอกข้อสุดท้าย! คำว่า live เป็นกริยาที่ไม่ต้องการกรรม (Intransitive) อยู่ดีๆ จะเอา which มาต่อท้ายตรงๆ โดยไม่มีบุพบท in ไม่ได้ครับ", isCorrect: false },
+      { text: "whose", rationale: "ยังไม่ถูกครับ whose ต้องใช้แสดงความเป็นเจ้าของโดยมีคำนามต่อท้ายทันที เช่น คฤหาสน์ที่หลังคาของมันพังลงมา (whose roof)", isCorrect: false }
+    ]
+  }
+];
+
+// ฟังก์ชันสลับตำแหน่งโจทย์
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+let shuffledQuizData = [];
+let currentQ = 0;
+let score = 0;
+let selected = null;
+let isChecked = false;
+
+// เริ่มต้นโหลดคลังข้อสอบด่านบอส
+function initQuiz() {
+  shuffledQuizData = shuffleArray([...quizData].map(q => ({
+    ...q,
+    options: shuffleArray([...q.options])
+  })));
+  currentQ = 0;
+  score = 0;
+  selected = null;
+  isChecked = false;
+}
+
+// วาดกราฟิกและองค์ประกอบเกม
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  const q = shuffledQuizData[currentQ];
+  const pct = (currentQ / shuffledQuizData.length) * 100;
+
+  container.innerHTML = `
+    <div class="header">
+      <h1>Advanced Grammar Boss Fight ⚔️🔥</h1>
+      <p>เลเวลยากมาก: ด่านปราบเซียน ท้าชนไวยากรณ์ขั้นสูง สกร.อำเภอโนนสัง</p>
+    </div>
+
+    <div class="card">
+      <div class="progress-container">
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <span>ด่านที่ ${currentQ + 1}/${shuffledQuizData.length}</span>
+      </div>
+
+      <div class="hint-box">💡 <b>ตำราวิเคราะห์จุดหลอกข้อสอบ:</b> ${q.hint}</div>
+      
+      <div class="instruction">⚡ เลือกคำตอบที่ถูกต้องตามกฎไวยากรณ์ขั้นสูง (Advanced Syntax):</div>
+      <div class="question-text">${q.sentence}</div>
+
+      <div class="options-list">
+        ${q.options.map((opt, i) => `
+          <div class="option-item ${isChecked ? (opt.isCorrect ? 'correct' : (selected === i ? 'wrong' : '')) : (selected === i ? 'selected' : '')} ${isChecked ? 'disabled' : ''}" 
+               onclick="window.selectOpt(${i})">
+            ${opt.text}
+          </div>
+        `).join('')}
+      </div>
+
+      ${isChecked ? `
+        <div class="rationale-box ${q.options[selected].isCorrect ? 'correct' : 'wrong'}">
+          <b>${q.options[selected].isCorrect ? '✨ สุดยอด ไร้เทียมทาน!' : '❌ บทเรียนราคาแพง:'}</b> ${q.options[selected].rationale}
+        </div>
+        <button class="btn btn-primary" onclick="window.nextQ()">${currentQ === shuffledQuizData.length - 1 ? 'ประมวลผลการวิเคราะห์ระดับเซียน' : 'ลุยข้อถัดไป ➡️'}</button>
+      ` : `
+        <button class="btn btn-primary" ${selected === null ? 'disabled' : ''} onclick="window.checkAns()">ส่งคำตอบเพื่อท้าชน 🔎</button>
+      `}
+    </div>
+  `;
+}
+
+// ประกาศฟังก์ชันลง window object ทั้งหมดเพื่อความเสถียร
+window.selectOpt = function(i) {
+  if (!isChecked) {
+    selected = i;
+    renderQuiz();
+  }
+};
+
+window.checkAns = function() {
+  isChecked = true;
+  if (shuffledQuizData[currentQ].options[selected].isCorrect) {
+    score++;
+  }
+  renderQuiz();
+};
+
+window.nextQ = function() {
+  if (currentQ < shuffledQuizData.length - 1) {
+    currentQ++;
+    selected = null;
+    isChecked = false;
+    renderQuiz();
+  } else {
+    window.showSummary(); // เข้าสู่หน้าประเมินเมื่อจบข้อสุดท้าย
+  }
+};
+
+window.initQuiz = initQuiz;
+window.renderQuiz = renderQuiz;
+
+// ระบบแสดงผลลัพธ์และประเมินศักยภาพผู้เรียนขั้นสูง (เรนเดอร์ชัวร์ 100%)
+window.showSummary = function() {
+  const container = document.getElementById('quiz-container');
+  
+  let evalTitle = "";
+  let evalDesc = "";
+  let evalColor = "";
+  
+  // เกณฑ์วัดระดับความสามารถด่านยากพิเศษ (เต็ม 20 คะแนน)
+  if (score >= 18) {
+    evalTitle = "ระดับ: ปรมาจารย์ภาษาศาสตร์ขั้นสูงสุด (Grandmaster of English) 👑🏆";
+    evalDesc = "นี่มันระดับอัจฉริยะแล้วครับ! คุณสามารถโค่นด่านบอสวิชาแกรมม่าที่ยากที่สุดลงได้ โครงสร้างระดับปราบเซียน เช่น Inversion, Subjunctive และ Mixed Conditionals ไม่สามารถสร้างความสับสนให้คุณได้เลย คุณมีความพร้อมในการสอบแข่งขันทุกสนามระดับประเทศ หรือศึกษาต่อขั้นสูงได้อย่างไร้ปัญหา ยอดเยี่ยมที่สุดครับ!";
+    evalColor = "var(--gold)";
+  } else if (score >= 14) {
+    evalTitle = "ระดับ: เซียนแกรมม่าขั้นสูง (Advanced Proficiency) 🔥";
+    evalDesc = "ทำคะแนนได้น่าประทับใจมากครับ! คุณมีทักษะไวยากรณ์ขั้นสูงที่แข็งแกร่ง สามารถจับทางข้อสอบหลอกตาและโครงสร้างลดรูปได้อย่างชาญฉลาด มีพลาดท่าให้กับสำนวนข้อยกเว้นและ Tense ซ้อนอดีตเพียงเล็กน้อยเท่านั้น ถือเป็นกลุ่มผู้เรียนที่มีศักยภาพสูงมากครับ";
+    evalColor = "var(--primary)";
+  } else if (score >= 10) {
+    evalTitle = "ระดับ: นักสู้ผู้มีพื้นฐานแน่นหนา (Competent Learner) 👍";
+    evalDesc = "ยินดีด้วยครับ คุณสามารถเอาตัวรอดจากด่านยากระดับท้าทายนี้มาได้! คะแนนระบุว่าคุณเริ่มจับทิศทางของไวยากรณ์ประยุกต์ได้ดี แต่อาจจะยังมีสับสนกฎยกเว้นเฉพาะ เช่น กริยา object to หรือสำนวนประชดประชัน แนะนำทบทวนกล่องคำใบ้สีเหลืองซ้ำอีกรอบ จะช่วยอุดรอยรั่วได้ดีมากครับ";
+    evalColor = "var(--warning)";
+  } else {
+    evalTitle = "ระดับ: ควรรับการเสริมอาวุธไวยากรณ์ (Focus & Practice Needed) 📚";
+    evalDesc = "พยายามได้ดีและกล้าหาญมากครับที่มาท้าทายด่านนี้! ไม่ต้องเสียใจกับคะแนนนะครับ เนื่องจากข้อสอบชุดนี้คัดเฉพาะจุดที่ยากและลึกที่สุดของไวยากรณ์ภาษาอังกฤษมาเป็นด่านบอส แนะนำให้กลับไปทบทวนชุดระดับปานกลาง (Level 2-3) ให้แม่นยำก่อน แล้วกลับมาลองกด 'เล่นใหม่อยีกรอบ' เพื่อพิชิตด่านนี้อีกครั้งนะครับ สู้ๆ ครับ!";
+    evalColor = "var(--danger)";
+  }
+
+  container.innerHTML = `
+    <div class="card" style="text-align:center; border: 2px solid var(--gold);">
+      <h2 style="font-size:30px; margin-bottom: 5px; color: var(--primary-dark)">🎉 สิ้นสุดการต่อสู้ระดับเซียน!</h2>
+      <p style="color: #475569; font-weight: 500;">สรุปบันทึกผลคะแนน Advanced Grammar & Syntax</p>
+      
+      <div style="font-size:72px; font-weight:800; color:var(--primary); margin: 15px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">${score}/${shuffledQuizData.length}</div>
+      
+      <!-- กล่องบทวิเคราะห์ผลประเมินรายบุคคลเชิงระบบ -->
+      <div class="evaluation-box" style="border-left-color: ${evalColor}; background: var(--primary-light);">
+        <b style="color: ${evalColor}; font-size: 17px; display: block; margin-bottom: 6px;">📊 รายงานวิเคราะห์สมรรถนะขั้นสูง:</b>
+        <span style="font-weight: 700; font-size: 16px; color: #0f172a;">${evalTitle}</span>
+        <p style="margin-top: 8px; font-size: 14px; color: #334155; font-weight: 400; line-height: 1.6;">${evalDesc}</p>
+      </div>
+
+      <button class="btn btn-primary" onclick="window.initQuiz(); window.renderQuiz();">🔄 ท้าทายด่านบอสใหม่อีกรอบ (ระบบจะสุ่มโจทย์ใหม่หมด)</button>
+    </div>
+  `;
+};
+
+// รันระบบอัตโนมัติเมื่อเปิดหน้าเว็บ
+window.initQuiz();
+window.renderQuiz();
+</script>
+</body>
+</html>
